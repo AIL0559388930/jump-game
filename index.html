@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة القفز وربح المكافآت</title>
+    <!-- مكتبة إعلانات Adsgram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            color: #ffffff;
+            font-family: Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        game-container {
+            text-align: center;
+        }
+        canvas {
+            background: #222;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-ad {
+            background-color: #ff9800;
+        }
+        .score-board {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="score-board">النقاط: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="360" height="480"></canvas>
+        <div>
+            <button class="btn" onclick="jump()">قفز (Jump)</button>
+        </div>
+        <div>
+            <button class="btn btn-ad" onclick="showRewardedAd()">مشاهدة إعلان لمضاعفة النقاط (+50)</button>
+        </div>
+    </div>
+
+    <script>
+        // تهيئة إعلانات Adsgram (استبدل blockId بالمعرف الخاص بك من لوحة تحكم Adsgram)
+        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "int--xxxx" }) : null;
+
+        function showRewardedAd() {
+            if (adController) {
+                adController.show().then(() => {
+                    // تم مشاهدة الإعلان بنجاح، امنح المكافأة للاستخدم
+                    score += 50;
+                    document.getElementById("score").innerText = score;
+                    alert("مبروك! حصلت على 50 نقطة إضافية.");
+                }).catch((result) => {
+                    // حدث خطأ أو أغلق المستخدم الإعلان قبل إكماله
+                    console.log("Ad error or skipped", result);
+                    alert("لم تكمل مشاهدة الإعلان، حاول مرة أخرى.");
+                });
+            } else {
+                // وضع التجربة في حال لم يتم تحميل الـ SDK محلياً
+                alert("نظام الإعلانات غير متاح حالياً، جرب لاحقاً.");
+                score += 50;
+                document.getElementById("score").innerText = score;
+            }
+        }
+
+        // إعدادات لعبة القفز البسيطة
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let score = 0;
+        let player = { x: 50, y: 380, width: 30, height: 30, vy: 0, gravity: 0.6, jumpPower: -10, grounded: false };
+        let obstacle = { x: 360, y: 390, width: 20, height: 40, speed: 4 };
+
+        function jump() {
+            if (player.grounded) {
+                player.vy = player.jumpPower;
+                player.grounded = false;
+            }
+        }
+
+        // التحكم باللمس على الشاشة أو الكيبورد
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space") jump();
+        });
+        canvas.addEventListener("click", jump);
+
+        function update() {
+            // حركة اللاعب والجاذبية
+            player.vy += player.gravity;
+            player.y += player.vy;
+
+            if (player.y >= 380) {
+                player.y = 380;
+                player.vy = 0;
+                player.grounded = true;
+            }
+
+            // حركة العوائق
+            obstacle.x -= obstacle.speed;
+            if (obstacle.x < -20) {
+                obstacle.x = 360;
+                score += 10;
+                document.getElementById("score").innerText = score;
+                // زيادة السرعة تدريجياً
+                obstacle.speed += 0.1;
+            }
+
+            // اصطدام بسيط
+            if (
+                player.x < obstacle.x + obstacle.width &&
+                player.x + player.width > obstacle.x &&
+                player.y < obstacle.y + obstacle.height &&
+                player.y + player.height > obstacle.y
+            ) {
+                // إعادة ضبط اللعبة عند الاصطدام
+                score = 0;
+                obstacle.speed = 4;
+                obstacle.x = 360;
+                document.getElementById("score").innerText = score;
+            }
+        }
+
+        function draw() {
+            // مسح الشاشة
+            ctx.fillStyle = "#222";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // رسم الأرض
+            ctx.fillStyle = "#4CAF50";
+            ctx.fillRect(0, 410, canvas.width, 70);
+
+            // رسم اللاعب
+            ctx.fillStyle = "#FF5722";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // رسم العائق
+            ctx.fillStyle = "#03A9F4";
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+    </script>
+</body>
+</html>
