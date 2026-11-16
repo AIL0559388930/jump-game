@@ -123,13 +123,13 @@
             background-color: #27ae60;
         }
         .small-withdraw-btn {
-            background-color: #e67e22;
-            color: white;
+            background-color: #7f8c8d;
+            color: #bdc3c7;
             border: none;
             padding: 4px 8px;
             font-size: 10px;
             border-radius: 4px;
-            cursor: pointer;
+            cursor: not-allowed;
             font-weight: bold;
         }
         .small-withdraw-btn:active, .action-btn:active {
@@ -151,9 +151,9 @@
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 محفظة الأرباح</div>
             
-            <!-- 1. رصيد عملة A -->
+            <!-- 1. رصيد عملة A (السحب مقفل هنا) -->
             <div class="wallet-balance">
-                <button class="small-withdraw-btn" onclick="requestCoinWithdraw()">سحب عملة A</button>
+                <button class="small-withdraw-btn" title="السحب مقفل">سحب عملة A (قريباً)</button>
                 <span>رصيد عملة A: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
             </div>
 
@@ -221,7 +221,7 @@
 
         let isGameOver = false;
         const tonPriceInUSD = 5.0; 
-        const minWithdrawTON = 0.02;
+        const minWithdrawTON = 0.05; // الحد الأدنى الجديد للسحب
 
         let amir = {
             x: 40,
@@ -355,7 +355,6 @@
         function watchAdForReward() {
             if (adController) {
                 adController.show().then(() => {
-                    // تم مشاهدة الإعلان بنجاح، امنح المكافأة
                     adUSD += 0.0150; 
                     updateBalances();
                     alert("📺 مبروك! تمت مشاهدة الإعلان بنجاح وإضافة الأرباح إلى رصيدك.");
@@ -364,21 +363,47 @@
                     alert("لم تكمل مشاهدة الإعلان، حاول مرة أخرى.");
                 });
             } else {
-                // وضع التجربة المحلي في حال لم يتم تحميل النظام خارج تيليجرام
                 adUSD += 0.0150; 
                 updateBalances();
                 alert("📺 تم إضافة أرباح الإعلان (وضع التجربة المحلي).");
             }
         }
 
-        // تم تعطيل سحب عملة A وإظهار تنبيه الإيقاف باللغتين
+        // دالة سحب عملة A معطلة لأن السحب مقفل بناءً على طلبك
         function requestCoinWithdraw() {
-            alert("⚠️ تم إيقاف عمليات سحب عملة A مؤقتاً في الوقت الحالي.\n\nWithdrawals for token A are temporarily paused at the moment.");
+            alert("🔒 سحب عملة A مقفل حالياً وسيتم تفعيله في التحديثات القادمة.");
         }
 
-        // تم تعطيل سحب الأرباح العام وإظهار تنبيه الإيقاف باللغتين أيضاً
-        function requestWithdraw() {
-            alert("⚠️ تم إيقاف عمليات سحب عملة A مؤقتاً في الوقت الحالي.\n\nWithdrawals for token A are temporarily paused at the moment.");
+        // طلب سحب الأرباح العام TON (الحد الأدنى 0.05 TON)
+        async function requestWithdraw() {
+            let email = document.getElementById("playerEmail").value.trim();
+            let addr = document.getElementById("walletAddress").value.trim();
+
+            if (!email || !addr) {
+                alert("⚠️ الرجاء إدخال وحفظ الإيميل وعنوان محفظة TON أولاً.");
+                return;
+            }
+
+            let playTON = (playUSD / tonPriceInUSD);
+            let adTON = (adUSD / tonPriceInUSD);
+            let totalTON = playTON + adTON;
+
+            if (totalTON < minWithdrawTON) {
+                alert(`⚠️ رصيدك الحالي (${totalTON.toFixed(4)} TON) أقل من الحد الأدنى للسحب وهو (${minWithdrawTON} TON).`);
+                return;
+            }
+
+            let msg = `🚀 طلب سحب أرباح TON جديد!\n📧 الإيميل: ${email}\n📍 محفظة TON: ${addr}\n💎 الإجمالي: ${totalTON.toFixed(4)} TON`;
+            let sent = await sendTelegramNotification(msg);
+
+            if (sent) {
+                alert("✅ تم إرسال طلب السحب بنجاح إلى الإدارة وسيتم معالجته قريباً!");
+                playUSD = 0;
+                adUSD = 0;
+                updateBalances();
+            } else {
+                alert("❌ حدث خطأ أثناء الإرسال، تأكد من الاتصال وحاول مرة أخرى.");
+            }
         }
 
         function draw() {
