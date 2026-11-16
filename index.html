@@ -132,12 +132,64 @@
             cursor: not-allowed;
             font-weight: bold;
         }
-        .small-withdraw-btn:active, .action-btn:active {
-            transform: scale(0.98);
+        /* نافذة الإعلان عند الدخول الأول للبوت */
+        #adOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ad-popup-box {
+            background: #34495e;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 320px;
+            width: 100%;
+            border: 2px solid #f1c40f;
+            text-align: center;
+        }
+        .ad-popup-box h3 {
+            color: #f1c40f;
+            margin-top: 0;
+        }
+        .ad-popup-box p {
+            font-size: 14px;
+            color: #ecf0f1;
+            line-height: 1.5;
+        }
+        .ad-play-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
+
+    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة فقط في الجلسة -->
+    <div id="adOverlay" style="display: none;">
+        <div class="ad-popup-box">
+            <h3>📺 أهلاً بك في البوت</h3>
+            <p>مشاهدة إعلان ترحيبي واحد تتيح لك الدخول وبدء جني الأرباح بكل حرية!</p>
+            <button class="ad-play-btn" onclick="playWelcomeAd()">مشاهدة الإعلان والدخول</button>
+        </div>
+    </div>
 
     <div class="game-container">
         <h2>🎮 العب واكسب</h2>
@@ -151,18 +203,15 @@
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 محفظة الأرباح</div>
             
-            <!-- 1. رصيد عملة A (السحب مقفل هنا) -->
             <div class="wallet-balance">
                 <button class="small-withdraw-btn" title="السحب مقفل">سحب عملة A (قريباً)</button>
                 <span>رصيد عملة A: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
             </div>
 
-            <!-- 2. رصيد TON العب -->
             <div class="wallet-balance" style="justify-content: flex-end;">
                 <span>رصيد TON العب: <span id="playTon">0.0000</span> TON</span>
             </div>
 
-            <!-- 3. رصيد TON مشاهدة الاعلان -->
             <div class="wallet-balance" style="justify-content: flex-end;">
                 <span>رصيد TON مشاهدة الاعلان: <span id="adTon">0.0000</span> TON</span>
             </div>
@@ -171,7 +220,6 @@
                 الإجمالي: <span id="tonTotal">0.0000</span> TON (≈ $<span id="usdTotal">0.0000</span>)
             </div>
             
-            <!-- خانات إدخال الإيميل وعنوان محفظة TON -->
             <input type="email" id="playerEmail" class="wallet-input ar" placeholder="اكتب بريدك الإلكتروني (الإيميل) هنا">
             <input type="text" id="walletAddress" class="wallet-input" placeholder="اكتب عنوان محفظة TON هنا (EQ...)">
             
@@ -207,7 +255,6 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // استرجاع البيانات المحفوظة مسبقاً (الحفظ الدائم)
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
         let playUSD = parseFloat(localStorage.getItem('pe_playUSD')) || 0.0000;
@@ -221,7 +268,7 @@
 
         let isGameOver = false;
         const tonPriceInUSD = 5.0; 
-        const minWithdrawTON = 0.05; // الحد الأدنى الجديد للسحب
+        const minWithdrawTON = 0.05;
 
         let amir = {
             x: 40,
@@ -257,11 +304,42 @@
             return carTypes[Math.floor(Math.random() * carTypes.length)];
         }
 
+        // التحقق مما إذا كان المستخدم قد شاهد إعلان الدخول في هذه الجلسة (Session)
+        window.addEventListener('load', () => {
+            if (!sessionStorage.getItem('welcomed_ad_shown')) {
+                document.getElementById('adOverlay').style.display = 'flex';
+            }
+        });
+
+        // تهيئة إعلانات Adsgram بالمعرف الصحيح UnitID: 59867
+        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "59867" }) : null;
+
+        // دالة عرض إعلان الترحيب عند فتح البوت
+        function playWelcomeAd() {
+            if (adController) {
+                adController.show().then(() => {
+                    adUSD += 0.0150; // أرباح الإعلان لمالك البوت
+                    updateBalances();
+                    sessionStorage.setItem('welcomed_ad_shown', 'true'); // تسجيل أنه شاهد الإعلان لهذه الجلسة
+                    document.getElementById('adOverlay').style.display = 'none';
+                }).catch((result) => {
+                    console.log("Ad error or skipped", result);
+                    alert("يجب إكمال مشاهدة الإعلان للدخول إلى البوت.");
+                });
+            } else {
+                adUSD += 0.0150; 
+                updateBalances();
+                sessionStorage.setItem('welcomed_ad_shown', 'true');
+                document.getElementById('adOverlay').style.display = 'none';
+            }
+        }
+
         function makeJump() {
             if (amir.grounded && !isGameOver) {
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
             } else if (isGameOver) {
+                // إذا خسر، يستطيع إعادة اللعب مباشرة وبدون إعلانات إجبارية!
                 resetGame();
             }
         }
@@ -309,7 +387,6 @@
                 obstacle.currentCar = getRandomCar();
                 score += 10;
                 gameCoins += 1; 
-                
                 playUSD += 0.00025; 
                 updateBalances();
             }
@@ -349,9 +426,6 @@
             alert("✅ تم حفظ الإيميل وعنوان المحفظة بنجاح!");
         }
 
-        // تهيئة إعلانات Adsgram بالمعرف الصحيح UnitID: 59867
-        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "59867" }) : null;
-
         function watchAdForReward() {
             if (adController) {
                 adController.show().then(() => {
@@ -369,12 +443,6 @@
             }
         }
 
-        // دالة سحب عملة A معطلة لأن السحب مقفل بناءً على طلبك
-        function requestCoinWithdraw() {
-            alert("🔒 سحب عملة A مقفل حالياً وسيتم تفعيله في التحديثات القادمة.");
-        }
-
-        // طلب سحب الأرباح العام TON (الحد الأدنى 0.05 TON)
         async function requestWithdraw() {
             let email = document.getElementById("playerEmail").value.trim();
             let addr = document.getElementById("walletAddress").value.trim();
@@ -454,7 +522,7 @@
                 ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
                 
                 ctx.font = "13px Tahoma";
-                ctx.fillText("اضغط للبدء من جديد", canvas.width / 2, 95);
+                ctx.fillText("اضغط للبدء من جديد (بدون إعلان)", canvas.width / 2, 95);
             }
 
             document.getElementById("score").innerText = score;
