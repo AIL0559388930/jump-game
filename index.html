@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العب واكسب - مغامرة اللاعب</title>
-    <!-- مكتبة إعلانات Adsgram SDK -->
-    <script src="https://sad.adsgram.ai/js/adsgram.min.js?v=1"></script>
+    <!-- مكتبة إعلانات Adsgram SDK المحدثة -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -186,7 +186,7 @@
 </head>
 <body>
 
-    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة في الجلسة لربح المالك -->
+    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة في الجلسة -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
             <h3>📺 أهلاً بك في البوت</h3>
@@ -309,16 +309,17 @@
             return carTypes[Math.floor(Math.random() * carTypes.length)];
         }
 
-        // التحقق من جلسة الدخول لإظهار الإعلان الإجباري للمالك عند فتح البوت أول مرة
+        // التحقق من جلسة الدخول لإظهار الإعلان عند فتح البوت أول مرة
         window.addEventListener('load', () => {
             if (!sessionStorage.getItem('welcomed_ad_shown')) {
                 document.getElementById('adOverlay').style.display = 'flex';
             }
         });
 
-        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "59867" }) : null;
+        // تهيئة وحدة الإعلانات بمعرفك الجديد (60176)
+        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "60176" }) : null;
 
-        // إعلان الدخول (أرباحه للمالك بالكامل)
+        // دالة تشغيل الإعلان الترحيبي أو الإضافي
         function playWelcomeAd() {
             if (adController) {
                 adController.show().then(() => {
@@ -334,7 +335,6 @@
             }
         }
 
-        // دالة فتح محادثة الدعم الفني المباشر معك
         function openSupport() {
             window.open('https://t.me/AIL05593889', '_blank');
         }
