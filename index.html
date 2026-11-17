@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العب واكسب - مغامرة اللاعب</title>
-    <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>تعدين وعملات A - مغامرة اللاعب</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -61,14 +59,15 @@
         }
         .wallet-header {
             font-size: 13px;
-            color: #3498db;
+            color: #f1c40f;
             font-weight: bold;
             margin-bottom: 5px;
+            text-align: center;
         }
         .wallet-balance {
-            font-size: 12px;
+            font-size: 13px;
             color: #bdc3c7;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -79,13 +78,12 @@
         }
         .wallet-total {
             font-size: 13px;
-            color: #f1c40f;
+            color: #2ecc71;
             font-weight: bold;
             margin-bottom: 8px;
             border-top: 1px dashed #4b6584;
-            padding-top: 4px;
-            direction: ltr;
-            text-align: left;
+            padding-top: 6px;
+            text-align: center;
         }
         .wallet-input {
             width: 100%;
@@ -113,8 +111,8 @@
             background-color: #0088cc;
             color: white;
             border: none;
-            padding: 7px;
-            font-size: 11px;
+            padding: 8px;
+            font-size: 12px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
@@ -129,139 +127,48 @@
         .copy-btn {
             background-color: #e67e22;
         }
-        .small-withdraw-btn {
-            background-color: #7f8c8d;
-            color: #bdc3c7;
-            border: none;
-            padding: 4px 8px;
-            font-size: 10px;
-            border-radius: 4px;
-            cursor: not-allowed;
-            font-weight: bold;
-        }
-        /* نافذة الإعلان الترحيبي عند فتح البوت */
-        #adOverlay {
+        /* رسالة منبه التعدين العائمة */
+        #miningAlert {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .ad-popup-box {
-            background: #34495e;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 320px;
-            width: 100%;
-            border: 2px solid #f1c40f;
-            text-align: center;
-        }
-        .ad-popup-box h3 {
-            color: #f1c40f;
-            margin-top: 0;
-        }
-        .ad-popup-box p {
-            font-size: 14px;
-            color: #ecf0f1;
-            line-height: 1.5;
-        }
-        .ad-play-btn {
-            background-color: #27ae60;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
             color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-        /* نافذة محاكاة الإعلان التفاعلي */
-        #simulatedAdModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             z-index: 1000;
-            flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .ad-sim-content {
-            background: #1e272e;
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #e67e22;
-            text-align: center;
-            max-width: 320px;
-            width: 100%;
-        }
-        .timer-display {
-            font-size: 28px;
-            color: #f1c40f;
-            font-weight: bold;
-            margin: 15px 0;
+            display: none;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
 <body>
 
-    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة -->
-    <div id="adOverlay" style="display: none;">
-        <div class="ad-popup-box">
-            <h3>📺 أهلاً بك في البوت</h3>
-            <p>مشاهدة الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي وربح عملات A!</p>
-            <button class="ad-play-btn" onclick="startRewardedAd(true)">مشاهدة الإعلان واللعب</button>
-        </div>
-    </div>
-
-    <!-- نافذة محاكاة مشاهدة الإعلان لمدة 5 ثواني -->
-    <div id="simulatedAdModal">
-        <div class="ad-sim-content">
-            <h3 style="color: #e67e22; margin-top:0;">🎥 جارٍ عرض الإعلان...</h3>
-            <p style="font-size: 13px; color: #bdc3c7;">يرجى الانتظار حتى اكتمال العد التنازلي لتحصل على مكافأة عملات A فوراً!</p>
-            <div class="timer-display" id="adTimer">5</div>
-            <p style="font-size: 11px; color: #7f8c8d;">Zone ID: 472809</p>
-        </div>
-    </div>
+    <!-- رسالة تعدين عملة A المتحركة -->
+    <div id="miningAlert">⛏️ تم تعدين +1 عملة A بنجاح!</div>
 
     <div class="game-container">
-        <h2>🎮 العب واكسب</h2>
+        <h2>⛏️ منصة تعدين عملة A</h2>
         <div class="score-board">النقاط: <span id="score">0</span></div>
         
         <canvas id="gameCanvas" width="350" height="170"></canvas>
         
-        <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب 🏃‍♂️</button>
+        <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- محفظة أرباح اللاعب -->
+        <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
-            <div class="wallet-header">💎 محفظة أرباح اللاعب</div>
+            <div class="wallet-header">💎 رصيد التعدين والمحفظة</div>
             
-            <div class="wallet-balance">
-                <button class="small-withdraw-btn" title="السحب مقفل">سحب عملة A (قريباً)</button>
-                <span>رصيد عملة A: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
-            </div>
-
-            <div class="wallet-balance" style="justify-content: flex-end;">
-                <span>رصيد أرباح اللعب (TON): <span id="playTon">0.0000</span> TON</span>
+            <div class="wallet-balance" style="justify-content: center; font-size: 15px;">
+                <span>إجمالي عملات A المعدنة: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
             </div>
 
             <div class="wallet-total">
-                إجمالي أرباحك القابلة للسحب: <span id="tonTotal">0.0000</span> TON (≈ $<span id="usdTotal">0.0000</span>)
+                🚀 حالة التعدين: نشط ومستمر مع كل قفزة واجتياز!
             </div>
             
             <input type="email" id="playerEmail" class="wallet-input ar" placeholder="اكتب بريدك الإلكتروني (الإيميل) هنا">
@@ -275,13 +182,8 @@
 
             <!-- مجموعة الأزرار الثانية -->
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="startRewardedAd(false)">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
-            </div>
-
-            <!-- زر الدعم الفني -->
-            <div class="wallet-btn-group">
-                <button class="action-btn support-btn" onclick="openSupport()" style="flex: 1;">🎧 الدعم الفني</button>
+                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم</button>
             </div>
         </div>
     </div>
@@ -312,7 +214,6 @@
 
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
-        let playUSD = parseFloat(localStorage.getItem('pe_playUSD')) || 0.0000;
         
         let savedEmail = localStorage.getItem('pe_email') || "";
         let savedWallet = localStorage.getItem('pe_wallet') || "";
@@ -321,8 +222,6 @@
         if(savedWallet) document.getElementById("walletAddress").value = savedWallet;
 
         let isGameOver = false;
-        const tonPriceInUSD = 5.0; 
-        const minWithdrawTON = 0.05;
 
         let amir = {
             x: 40,
@@ -367,40 +266,13 @@
             });
         }
 
-        window.addEventListener('load', () => {
-            if (!sessionStorage.getItem('welcomed_ad_shown')) {
-                document.getElementById('adOverlay').style.display = 'flex';
-            }
-        });
-
-        // نظام الإعلان التفاعلي (يزيد عملات A فقط ولا يؤثر على أرباح TON)
-        function startRewardedAd(isWelcome) {
-            if (isWelcome) {
-                document.getElementById('adOverlay').style.display = 'none';
-            }
-            
-            const modal = document.getElementById('simulatedAdModal');
-            const timerEl = document.getElementById('adTimer');
-            modal.style.display = 'flex';
-            
-            let timeLeft = 5;
-            timerEl.innerText = timeLeft;
-            
-            let countdown = setInterval(() => {
-                timeLeft--;
-                timerEl.innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    modal.style.display = 'none';
-                    
-                    sessionStorage.setItem('welcomed_ad_shown', 'true');
-                    
-                    // منح عملات A فقط
-                    gameCoins += 15;
-                    updateBalances();
-                    alert("📺 مبروك! تم مشاهدة الإعلان بنجاح وإضافة 15 عملة (A) إلى رصيدك.");
-                }
-            }, 1000);
+        // إظهار رسالة التعدين العائمة المتحركة
+        function showMiningPopup() {
+            const alertBox = document.getElementById("miningAlert");
+            alertBox.style.display = "block";
+            setTimeout(() => {
+                alertBox.style.display = "none";
+            }, 1500);
         }
 
         function openSupport() {
@@ -411,22 +283,21 @@
             if (amir.grounded && !isGameOver) {
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
+                
+                // تعدين عملة A عند كل قفزة ناجحة
+                gameCoins += 1;
+                updateBalances();
+                showMiningPopup();
+
             } else if (isGameOver) {
                 resetGame(); 
             }
         }
 
         function updateBalances() {
-            let playTON = playUSD / tonPriceInUSD;
-            
             document.getElementById("gameCoins").innerText = gameCoins;
-            document.getElementById("playTon").innerText = playTON.toFixed(4);
-            document.getElementById("tonTotal").innerText = playTON.toFixed(4);
-            document.getElementById("usdTotal").innerText = playUSD.toFixed(4);
-
             localStorage.setItem('pe_score', score);
             localStorage.setItem('pe_coins', gameCoins);
-            localStorage.setItem('pe_playUSD', playUSD);
         }
 
         function update() {
@@ -453,9 +324,9 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 1; // زيادة عملة A عند تخطي العقبات باللعب
-                playUSD += 0.00025; // أرباح اللعب الحقيقية بـ TON
+                gameCoins += 2; // مكافأة تعدين إضافية عند تخطي العقبة
                 updateBalances();
+                showMiningPopup();
             }
 
             let amirBox = { x: amir.x + 6, y: amir.y + 6, width: amir.width - 12, height: amir.height - 8 };
@@ -486,7 +357,7 @@
 
             localStorage.setItem('pe_email', email);
             localStorage.setItem('pe_wallet', addr);
-            alert("✅ تم حفظ البيانات بنجاح!");
+            alert("✅ تم حفظ بيانات التعدين بنجاح!");
         }
 
         async function requestWithdraw() {
@@ -498,19 +369,17 @@
                 return;
             }
 
-            let totalTON = (playUSD / tonPriceInUSD);
-
-            if (totalTON < minWithdrawTON) {
-                alert(`⚠️ رصيدك الحالي (${totalTON.toFixed(4)} TON) أقل من الحد الأدنى للسحب (${minWithdrawTON} TON).`);
+            if (gameCoins < 100) {
+                alert(`⚠️ رصيدك (${gameCoins} عملة A) أقل من الحد الأدنى للسحب (100 عملة A). استمر في اللعب والتعدين!`);
                 return;
             }
 
-            let msg = `🚀 طلب سحب أرباح TON جديد!\n📧 الإيميل: ${email}\n📍 محفظة TON: ${addr}\n💎 الإجمالي: ${totalTON.toFixed(4)} TON`;
+            let msg = `⛏️ طلب سحب رصيد تعدين عملة A جديد!\n📧 الإيميل: ${email}\n📍 محفظة TON: ${addr}\n💎 الكمية: ${gameCoins} عملة A`;
             let sent = await sendTelegramNotification(msg);
 
             if (sent) {
-                alert("✅ تم إرسال طلب السحب بنجاح إلى الإدارة وسيتم معالجته قريباً!");
-                playUSD = 0;
+                alert("✅ تم إرسال طلب السحب بنجاح إلى الإدارة وسيتم مراجعته وتحويل الأرباح قريباً!");
+                gameCoins = 0;
                 updateBalances();
             } else {
                 alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
@@ -565,7 +434,7 @@
                 ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
                 
                 ctx.font = "13px Tahoma";
-                ctx.fillText("اضغط للبدء من جديد فوراً", canvas.width / 2, 95);
+                ctx.fillText("اضغط للبدء والتعدين من جديد", canvas.width / 2, 95);
             }
 
             document.getElementById("score").innerText = score;
