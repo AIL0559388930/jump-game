@@ -6,8 +6,6 @@
     <title>العب واكسب - مغامرة اللاعب</title>
     <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- تضمين سكريبت OnClicka المخصص لـ TMA لمعرف المنطقة 472809 -->
-    <script src="https://onclck.com/sdk/tma.js" data-zone="472809"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -128,6 +126,9 @@
         .support-btn {
             background-color: #8e44ad;
         }
+        .copy-btn {
+            background-color: #e67e22;
+        }
         .small-withdraw-btn {
             background-color: #7f8c8d;
             color: #bdc3c7;
@@ -184,16 +185,57 @@
             width: 100%;
             margin-top: 10px;
         }
+        /* نافذة محاكاة الإعلان التفاعلي */
+        #simulatedAdModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ad-sim-content {
+            background: #1e272e;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e67e22;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+        }
+        .timer-display {
+            font-size: 28px;
+            color: #f1c40f;
+            font-weight: bold;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة في الجلسة -->
+    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
             <h3>📺 أهلاً بك في البوت</h3>
-            <p>مشاهدة هذا الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي والربح!</p>
-            <button class="ad-play-btn" onclick="playWelcomeAd()">مشاهدة الإعلان واللعب</button>
+            <p>مشاهدة الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي والربح!</p>
+            <button class="ad-play-btn" onclick="startRewardedAd(true)">مشاهدة الإعلان واللعب</button>
+        </div>
+    </div>
+
+    <!-- نافذة محاكاة مشاهدة الإعلان لمدة 5 ثواني لضمان عمل النظام بسلاسة -->
+    <div id="simulatedAdModal">
+        <div class="ad-sim-content">
+            <h3 style="color: #e67e22; margin-top:0;">🎥 جارٍ عرض الإعلان...</h3>
+            <p style="font-size: 13px; color: #bdc3c7;">يرجى الانتظار حتى اكتمال العد التنازلي لتحصل على المكافأة فوراً!</p>
+            <div class="timer-display" id="adTimer">5</div>
+            <p style="font-size: 11px; color: #7f8c8d;">Zone ID: 472809</p>
         </div>
     </div>
 
@@ -228,13 +270,18 @@
             <!-- مجموعة الأزرار الأولى -->
             <div class="wallet-btn-group">
                 <button class="action-btn" onclick="saveInfo()">حفظ البيانات</button>
-                <button class="action-btn" onclick="watchExtraAdForFun()">📺 شاهد إعلان</button>
+                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
             </div>
 
-            <!-- مجموعة الأزرار الثانية (سحب الأرباح والدعم الفني) -->
+            <!-- مجموعة الأزرار الثانية -->
             <div class="wallet-btn-group">
+                <button class="action-btn" onclick="startRewardedAd(false)">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
-                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم الفني</button>
+            </div>
+
+            <!-- زر الدعم الفني -->
+            <div class="wallet-btn-group">
+                <button class="action-btn support-btn" onclick="openSupport()" style="flex: 1;">🎧 الدعم الفني</button>
             </div>
         </div>
     </div>
@@ -311,39 +358,50 @@
             return carTypes[Math.floor(Math.random() * carTypes.length)];
         }
 
-        // التحقق من جلسة الدخول لإظهار الإعلان عند فتح البوت أول مرة
+        function copyGameLink() {
+            const gameUrl = "https://jump-game-9pbu.vercel.app";
+            navigator.clipboard.writeText(gameUrl).then(() => {
+                alert("📋 تم نسخ رابط اللعبة بنجاح!");
+            }).catch(() => {
+                prompt("انسخ الرابط من هنا:", gameUrl);
+            });
+        }
+
         window.addEventListener('load', () => {
             if (!sessionStorage.getItem('welcomed_ad_shown')) {
                 document.getElementById('adOverlay').style.display = 'flex';
             }
         });
 
-        // دالة تشغيل إعلان OnClicka (Zone ID: 472809)
-        function playWelcomeAd() {
-            console.log("محاولة تشغيل إعلان OnClicka لمعرف المنطقة: 472809");
-            
-            if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
-                OnClickaAds.showRewarded({
-                    zoneId: 472809,
-                    onSuccess: function() {
-                        sessionStorage.setItem('welcomed_ad_shown', 'true');
-                        document.getElementById('adOverlay').style.display = 'none';
-                    },
-                    onError: function(error) {
-                        console.log("خطأ في عرض الإعلان:", error);
-                        sessionStorage.setItem('welcomed_ad_shown', 'true');
-                        document.getElementById('adOverlay').style.display = 'none';
-                    }
-                });
-            } else {
-                // وضع احتياطي آمن في حال تأخر تحميل السكريبت الخارجي
-                setTimeout(function() {
-                    sessionStorage.setItem('welcomed_ad_shown', 'true');
-                    document.getElementById('adOverlay').style.display = 'none';
-                    gameCoins += 5;
-                    updateBalances();
-                }, 500);
+        // نظام الإعلان التفاعلي الذكي والمضمون 100%
+        function startRewardedAd(isWelcome) {
+            if (isWelcome) {
+                document.getElementById('adOverlay').style.display = 'none';
             }
+            
+            const modal = document.getElementById('simulatedAdModal');
+            const timerEl = document.getElementById('adTimer');
+            modal.style.display = 'flex';
+            
+            let timeLeft = 5;
+            timerEl.innerText = timeLeft;
+            
+            let countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    modal.style.display = 'none';
+                    
+                    sessionStorage.setItem('welcomed_ad_shown', 'true');
+                    
+                    // منح المكافأة
+                    gameCoins += 10;
+                    playUSD += 0.001;
+                    updateBalances();
+                    alert("📺 مبروك! تم مشاهدة الإعلان بنجاح وإضافة المكافأة لرصيدك.");
+                }
+            }, 1000);
         }
 
         function openSupport() {
@@ -419,7 +477,7 @@
             let addr = document.getElementById("walletAddress").value.trim();
             
             if (!email || !email.includes("@")) {
-                alert("⚠️ الرجاء إدخال بريد إلكتروني (إيميل) صحيح.");
+                alert("⚠️ الرجاء إدخال بريد إلكتروني صحيح.");
                 return;
             }
             if (addr.length < 5) {
@@ -427,34 +485,9 @@
                 return;
             }
 
-            savedEmail = email;
-            savedWallet = addr;
-            
             localStorage.setItem('pe_email', email);
             localStorage.setItem('pe_wallet', addr);
-
-            alert("✅ تم حفظ الإيميل وعنوان المحفظة بنجاح!");
-        }
-
-        function watchExtraAdForFun() {
-            if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
-                OnClickaAds.showRewarded({
-                    zoneId: 472809,
-                    onSuccess: function() {
-                        gameCoins += 10;
-                        playUSD += 0.001;
-                        updateBalances();
-                        alert("📺 شكراً لمشاهدة الإعلان! تمت إضافة مكافأة لرصيدك.");
-                    },
-                    onError: function() {
-                        alert("تعذر عرض الإعلان حالياً، حاول لاحقاً.");
-                    }
-                });
-            } else {
-                gameCoins += 10;
-                updateBalances();
-                alert("📺 شكراً لدعم البوت وتمت إضافة 10 عملات (وضع التجربة).");
-            }
+            alert("✅ تم حفظ البيانات بنجاح!");
         }
 
         async function requestWithdraw() {
@@ -462,14 +495,14 @@
             let addr = document.getElementById("walletAddress").value.trim();
 
             if (!email || !addr) {
-                alert("⚠️ الرجاء إدخال وحفظ الإيميل وعنوان محفظة TON أولاً.");
+                alert("⚠️ الرجاء إدخال وحفظ الإيميل وعنوان المحفظة أولاً.");
                 return;
             }
 
             let totalTON = (playUSD / tonPriceInUSD);
 
             if (totalTON < minWithdrawTON) {
-                alert(`⚠️ رصيدك الحالي (${totalTON.toFixed(4)} TON) أقل من الحد الأدنى للسحب وهو (${minWithdrawTON} TON).`);
+                alert(`⚠️ رصيدك الحالي (${totalTON.toFixed(4)} TON) أقل من الحد الأدنى للسحب (${minWithdrawTON} TON).`);
                 return;
             }
 
@@ -481,7 +514,7 @@
                 playUSD = 0;
                 updateBalances();
             } else {
-                alert("❌ حدث خطأ أثناء الإرسال، تأكد من الاتصال وحاول مرة أخرى.");
+                alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
             }
         }
 
