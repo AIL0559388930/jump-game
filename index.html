@@ -132,7 +132,7 @@
             cursor: not-allowed;
             font-weight: bold;
         }
-        /* نافذة الإعلان عند الدخول الأول للبوت */
+        /* نافذة الإعلان الترحيبي عند فتح البوت */
         #adOverlay {
             position: fixed;
             top: 0;
@@ -182,12 +182,12 @@
 </head>
 <body>
 
-    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة فقط في الجلسة -->
+    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة في الجلسة لربح المالك -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
             <h3>📺 أهلاً بك في البوت</h3>
-            <p>مشاهدة إعلان ترحيبي واحد تتيح لك الدخول وبدء جني الأرباح بكل حرية!</p>
-            <button class="ad-play-btn" onclick="playWelcomeAd()">مشاهدة الإعلان والدخول</button>
+            <p>مشاهدة هذا الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي والربح!</p>
+            <button class="ad-play-btn" onclick="playWelcomeAd()">مشاهدة الإعلان واللعب</button>
         </div>
     </div>
 
@@ -199,9 +199,9 @@
         
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب 🏃‍♂️</button>
 
-        <!-- محفظة الأرباح والعملات -->
+        <!-- محفظة أرباح اللاعب -->
         <div class="ton-wallet-box">
-            <div class="wallet-header">💎 محفظة الأرباح</div>
+            <div class="wallet-header">💎 محفظة أرباح اللاعب</div>
             
             <div class="wallet-balance">
                 <button class="small-withdraw-btn" title="السحب مقفل">سحب عملة A (قريباً)</button>
@@ -209,15 +209,11 @@
             </div>
 
             <div class="wallet-balance" style="justify-content: flex-end;">
-                <span>رصيد TON العب: <span id="playTon">0.0000</span> TON</span>
-            </div>
-
-            <div class="wallet-balance" style="justify-content: flex-end;">
-                <span>رصيد TON مشاهدة الاعلان: <span id="adTon">0.0000</span> TON</span>
+                <span>رصيد أرباح اللعب (TON): <span id="playTon">0.0000</span> TON</span>
             </div>
 
             <div class="wallet-total">
-                الإجمالي: <span id="tonTotal">0.0000</span> TON (≈ $<span id="usdTotal">0.0000</span>)
+                إجمالي أرباحك القابلة للسحب: <span id="tonTotal">0.0000</span> TON (≈ $<span id="usdTotal">0.0000</span>)
             </div>
             
             <input type="email" id="playerEmail" class="wallet-input ar" placeholder="اكتب بريدك الإلكتروني (الإيميل) هنا">
@@ -225,7 +221,7 @@
             
             <div class="wallet-btn-group">
                 <button class="action-btn" onclick="saveInfo()">حفظ البيانات</button>
-                <button class="action-btn" onclick="watchAdForReward()">📺 مشاهدة إعلان</button>
+                <button class="action-btn" onclick="watchExtraAdForFun()">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
             </div>
         </div>
@@ -258,7 +254,6 @@
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
         let playUSD = parseFloat(localStorage.getItem('pe_playUSD')) || 0.0000;
-        let adUSD = parseFloat(localStorage.getItem('pe_adUSD')) || 0.0000;
         
         let savedEmail = localStorage.getItem('pe_email') || "";
         let savedWallet = localStorage.getItem('pe_wallet') || "";
@@ -304,31 +299,27 @@
             return carTypes[Math.floor(Math.random() * carTypes.length)];
         }
 
-        // التحقق مما إذا كان المستخدم قد شاهد إعلان الدخول في هذه الجلسة (Session)
+        // التحقق من جلسة الدخول لإظهار الإعلان الإجباري للمالك عند فتح البوت أول مرة
         window.addEventListener('load', () => {
             if (!sessionStorage.getItem('welcomed_ad_shown')) {
                 document.getElementById('adOverlay').style.display = 'flex';
             }
         });
 
-        // تهيئة إعلانات Adsgram بالمعرف الصحيح UnitID: 59867
         const adController = window.Adsgram ? window.Adsgram.init({ blockId: "59867" }) : null;
 
-        // دالة عرض إعلان الترحيب عند فتح البوت
+        // إعلان الدخول (أرباحه للمالك بالكامل ولا تُضاف لرصيد سحب اللاعب)
         function playWelcomeAd() {
             if (adController) {
                 adController.show().then(() => {
-                    adUSD += 0.0150; // أرباح الإعلان لمالك البوت
-                    updateBalances();
-                    sessionStorage.setItem('welcomed_ad_shown', 'true'); // تسجيل أنه شاهد الإعلان لهذه الجلسة
+                    // الأرباح تسجل للمالك في لوحة إحصاءات Adsgram الخاصة بك
+                    sessionStorage.setItem('welcomed_ad_shown', 'true');
                     document.getElementById('adOverlay').style.display = 'none';
                 }).catch((result) => {
                     console.log("Ad error or skipped", result);
-                    alert("يجب إكمال مشاهدة الإعلان للدخول إلى البوت.");
+                    alert("يجب إكمال مشاهدة الإعلان للدخول.");
                 });
             } else {
-                adUSD += 0.0150; 
-                updateBalances();
                 sessionStorage.setItem('welcomed_ad_shown', 'true');
                 document.getElementById('adOverlay').style.display = 'none';
             }
@@ -339,27 +330,21 @@
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
             } else if (isGameOver) {
-                // إذا خسر، يستطيع إعادة اللعب مباشرة وبدون إعلانات إجبارية!
-                resetGame();
+                resetGame(); // إعادة اللعب مباشرة بدون إعلانات إجبارية عند الخسارة
             }
         }
 
         function updateBalances() {
             let playTON = playUSD / tonPriceInUSD;
-            let adTON = adUSD / tonPriceInUSD;
-            let totalTON = playTON + adTON;
-            let totalUSD = playUSD + adUSD;
             
             document.getElementById("gameCoins").innerText = gameCoins;
             document.getElementById("playTon").innerText = playTON.toFixed(4);
-            document.getElementById("adTon").innerText = adTON.toFixed(4);
-            document.getElementById("tonTotal").innerText = totalTON.toFixed(4);
-            document.getElementById("usdTotal").innerText = totalUSD.toFixed(4);
+            document.getElementById("tonTotal").innerText = playTON.toFixed(4);
+            document.getElementById("usdTotal").innerText = playUSD.toFixed(4);
 
             localStorage.setItem('pe_score', score);
             localStorage.setItem('pe_coins', gameCoins);
             localStorage.setItem('pe_playUSD', playUSD);
-            localStorage.setItem('pe_adUSD', adUSD);
         }
 
         function update() {
@@ -387,7 +372,7 @@
                 obstacle.currentCar = getRandomCar();
                 score += 10;
                 gameCoins += 1; 
-                playUSD += 0.00025; 
+                playUSD += 0.00025; // أرباح اللاعب ترتفع فقط من اجتياز العقارب واللعب
                 updateBalances();
             }
 
@@ -426,20 +411,17 @@
             alert("✅ تم حفظ الإيميل وعنوان المحفظة بنجاح!");
         }
 
-        function watchAdForReward() {
+        // زر مشاهدة إعلان اختياري إذا أراد اللاعب مشاهدته (أرباحه تذهب للمالك أيضاً لزيادة استدامة البوت)
+        function watchExtraAdForFun() {
             if (adController) {
                 adController.show().then(() => {
-                    adUSD += 0.0150; 
-                    updateBalances();
-                    alert("📺 مبروك! تمت مشاهدة الإعلان بنجاح وإضافة الأرباح إلى رصيدك.");
+                    alert("📺 شكراً لمشاهدة الإعلان ودعم استمرار البوت!");
                 }).catch((result) => {
                     console.log("Ad error or skipped", result);
-                    alert("لم تكمل مشاهدة الإعلان، حاول مرة أخرى.");
+                    alert("لم تكمل مشاهدة الإعلان.");
                 });
             } else {
-                adUSD += 0.0150; 
-                updateBalances();
-                alert("📺 تم إضافة أرباح الإعلان (وضع التجربة المحلي).");
+                alert("📺 شكراً لدعم البوت (وضع التجربة المحلي).");
             }
         }
 
@@ -452,9 +434,7 @@
                 return;
             }
 
-            let playTON = (playUSD / tonPriceInUSD);
-            let adTON = (adUSD / tonPriceInUSD);
-            let totalTON = playTON + adTON;
+            let totalTON = (playUSD / tonPriceInUSD);
 
             if (totalTON < minWithdrawTON) {
                 alert(`⚠️ رصيدك الحالي (${totalTON.toFixed(4)} TON) أقل من الحد الأدنى للسحب وهو (${minWithdrawTON} TON).`);
@@ -467,7 +447,6 @@
             if (sent) {
                 alert("✅ تم إرسال طلب السحب بنجاح إلى الإدارة وسيتم معالجته قريباً!");
                 playUSD = 0;
-                adUSD = 0;
                 updateBalances();
             } else {
                 alert("❌ حدث خطأ أثناء الإرسال، تأكد من الاتصال وحاول مرة أخرى.");
@@ -522,7 +501,7 @@
                 ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
                 
                 ctx.font = "13px Tahoma";
-                ctx.fillText("اضغط للبدء من جديد (بدون إعلان)", canvas.width / 2, 95);
+                ctx.fillText("اضغط للبدء من جديد فوراً", canvas.width / 2, 95);
             }
 
             document.getElementById("score").innerText = score;
