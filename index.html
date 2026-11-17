@@ -224,16 +224,16 @@
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
             <h3>📺 أهلاً بك في البوت</h3>
-            <p>مشاهدة الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي والربح!</p>
+            <p>مشاهدة الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي وربح عملات A!</p>
             <button class="ad-play-btn" onclick="startRewardedAd(true)">مشاهدة الإعلان واللعب</button>
         </div>
     </div>
 
-    <!-- نافذة محاكاة مشاهدة الإعلان لمدة 5 ثواني لضمان عمل النظام بسلاسة -->
+    <!-- نافذة محاكاة مشاهدة الإعلان لمدة 5 ثواني -->
     <div id="simulatedAdModal">
         <div class="ad-sim-content">
             <h3 style="color: #e67e22; margin-top:0;">🎥 جارٍ عرض الإعلان...</h3>
-            <p style="font-size: 13px; color: #bdc3c7;">يرجى الانتظار حتى اكتمال العد التنازلي لتحصل على المكافأة فوراً!</p>
+            <p style="font-size: 13px; color: #bdc3c7;">يرجى الانتظار حتى اكتمال العد التنازلي لتحصل على مكافأة عملات A فوراً!</p>
             <div class="timer-display" id="adTimer">5</div>
             <p style="font-size: 11px; color: #7f8c8d;">Zone ID: 472809</p>
         </div>
@@ -373,7 +373,7 @@
             }
         });
 
-        // نظام الإعلان التفاعلي الذكي والمضمون 100%
+        // نظام الإعلان التفاعلي (يزيد عملات A فقط ولا يؤثر على أرباح TON)
         function startRewardedAd(isWelcome) {
             if (isWelcome) {
                 document.getElementById('adOverlay').style.display = 'none';
@@ -395,11 +395,10 @@
                     
                     sessionStorage.setItem('welcomed_ad_shown', 'true');
                     
-                    // منح المكافأة
-                    gameCoins += 10;
-                    playUSD += 0.001;
+                    // منح عملات A فقط
+                    gameCoins += 15;
                     updateBalances();
-                    alert("📺 مبروك! تم مشاهدة الإعلان بنجاح وإضافة المكافأة لرصيدك.");
+                    alert("📺 مبروك! تم مشاهدة الإعلان بنجاح وإضافة 15 عملة (A) إلى رصيدك.");
                 }
             }, 1000);
         }
@@ -454,8 +453,8 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 1; 
-                playUSD += 0.00025; 
+                gameCoins += 1; // زيادة عملة A عند تخطي العقبات باللعب
+                playUSD += 0.00025; // أرباح اللعب الحقيقية بـ TON
                 updateBalances();
             }
 
