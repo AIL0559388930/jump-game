@@ -332,15 +332,15 @@
             }
         });
 
-        // دالة فتح رابط الإعلان الحقيقي المرتبط بمنطقتك (Zone ID: 472809) لاحتساب أرباحك وتزويد اللاعب بعملات A
+        // الرابط الصحيح والمضبوط لفتح الإعلان الحقيقي وتسجيل أرباحك
         function openRealAd(isWelcome) {
             if (isWelcome) {
                 document.getElementById('adOverlay').style.display = 'none';
                 sessionStorage.setItem('welcomed_ad_shown', 'true');
             }
             
-            // فتح رابط الإعلان المباشر في صفحة جديدة ليتم تسجيل الزيارة في حسابك
-            window.open('https://partners.onclck.com/show.php?zone=472809', '_blank');
+            // فتح رابط الإعلان المباشر الصحيح
+            window.open('https://partners.onclicka.com/show.php?zone=472809', '_blank');
             
             // إضافة مكافأة عملات A للاعب
             gameCoins += 15;
@@ -398,8 +398,8 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 1; // زيادة عملة A عند اللعب وتجاوز العقبات
-                playUSD += 0.00025; // أرباح اللعب الحقيقية بـ TON
+                gameCoins += 1; 
+                playUSD += 0.00025; 
                 updateBalances();
             }
 
