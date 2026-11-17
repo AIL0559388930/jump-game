@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العب واكسب - مغامرة اللاعب</title>
-    <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -139,7 +137,7 @@
             cursor: not-allowed;
             font-weight: bold;
         }
-        /* نافذة الإعلان الترحيبي عند فتح البوت */
+        /* نافذة الإعلان الترحيبي عند فتح الموقع */
         #adOverlay {
             position: fixed;
             top: 0;
@@ -189,12 +187,12 @@
 </head>
 <body>
 
-    <!-- نافذة الإعلان الترحيبي عند فتح البوت -->
+    <!-- نافذة الإعلان الترحيبي عند الدخول للموقع -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
-            <h3>📺 أهلاً بك في البوت</h3>
+            <h3>📺 أهلاً بك في الموقع</h3>
             <p>انقر أدناه لمشاهدة الإعلان ودخول اللعبة لربح عملات A وتسجيل الأرباح!</p>
-            <button class="ad-play-btn" onclick="openDirectAd(true)">مشاهدة الإعلان واللعب</button>
+            <button class="ad-play-btn" onclick="openWebAd(true)">مشاهدة الإعلان والدخول</button>
         </div>
     </div>
 
@@ -234,7 +232,7 @@
 
             <!-- مجموعة الأزرار الثانية -->
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="openDirectAd(false)">📺 شاهد إعلان</button>
+                <button class="action-btn" onclick="openWebAd(false)">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
             </div>
 
@@ -279,7 +277,7 @@
         if(savedEmail) document.getElementById("playerEmail").value = savedEmail;
         if(savedWallet) document.getElementById("walletAddress").value = savedWallet;
 
-        let isGameOver = false;
+        let isGameOver = theGameIsOver = false;
         const tonPriceInUSD = 5.0; 
         const minWithdrawTON = 0.05;
 
@@ -332,17 +330,17 @@
             }
         });
 
-        // دالة موثوقة تفتح رابط الإعلان المباشر الخاص بك في متصفح خارجي لتسجيل الأرباح وتمنح اللاعب العملات
-        function openDirectAd(isWelcome) {
+        // دالة فتح الإعلان المخصص للموقع الإلكتروني لتسجيل الزيارات والأرباح في OnClicka
+        function openWebAd(isWelcome) {
             if (isWelcome) {
                 document.getElementById('adOverlay').style.display = 'none';
                 sessionStorage.setItem('welcomed_ad_shown', 'true');
             }
             
-            // رابط مباشر يعمل كموجه إعلاني مضمون لفتح صفحة الإعلان وتسجيل النقرة في حسابك
-            window.open('https://www.onclicka.com/afu.php?zoneid=472809', '_blank');
+            // فتح رابط منطقة الإعلانات الخاص بك كصفحة ويب مستقلة
+            window.open('https://partners.onclicka.com/show.php?zone=472809', '_blank');
             
-            // منح عملات A للاعب فور الضغط والمشاهدة
+            // منح عملات A للاعب
             gameCoins += 15;
             updateBalances();
             alert("📺 شكراً لتفاعلكم! تمت إضافة 15 عملة (A) إلى رصيدك.");
