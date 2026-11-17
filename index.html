@@ -107,6 +107,7 @@
         .wallet-btn-group {
             display: flex;
             gap: 5px;
+            margin-top: 5px;
         }
         .action-btn {
             background-color: #0088cc;
@@ -121,6 +122,9 @@
         }
         .withdraw-btn {
             background-color: #27ae60;
+        }
+        .support-btn {
+            background-color: #8e44ad;
         }
         .small-withdraw-btn {
             background-color: #7f8c8d;
@@ -219,10 +223,16 @@
             <input type="email" id="playerEmail" class="wallet-input ar" placeholder="اكتب بريدك الإلكتروني (الإيميل) هنا">
             <input type="text" id="walletAddress" class="wallet-input" placeholder="اكتب عنوان محفظة TON هنا (EQ...)">
             
+            <!-- مجموعة الأزرار الأولى -->
             <div class="wallet-btn-group">
                 <button class="action-btn" onclick="saveInfo()">حفظ البيانات</button>
                 <button class="action-btn" onclick="watchExtraAdForFun()">📺 شاهد إعلان</button>
+            </div>
+
+            <!-- مجموعة الأزرار الثانية (سحب الأرباح والدعم الفني) -->
+            <div class="wallet-btn-group">
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
+                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم الفني</button>
             </div>
         </div>
     </div>
@@ -308,11 +318,10 @@
 
         const adController = window.Adsgram ? window.Adsgram.init({ blockId: "59867" }) : null;
 
-        // إعلان الدخول (أرباحه للمالك بالكامل ولا تُضاف لرصيد سحب اللاعب)
+        // إعلان الدخول (أرباحه للمالك بالكامل)
         function playWelcomeAd() {
             if (adController) {
                 adController.show().then(() => {
-                    // الأرباح تسجل للمالك في لوحة إحصاءات Adsgram الخاصة بك
                     sessionStorage.setItem('welcomed_ad_shown', 'true');
                     document.getElementById('adOverlay').style.display = 'none';
                 }).catch((result) => {
@@ -325,12 +334,17 @@
             }
         }
 
+        // دالة فتح محادثة الدعم الفني المباشر معك
+        function openSupport() {
+            window.open('https://t.me/AIL05593889', '_blank');
+        }
+
         function makeJump() {
             if (amir.grounded && !isGameOver) {
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
             } else if (isGameOver) {
-                resetGame(); // إعادة اللعب مباشرة بدون إعلانات إجبارية عند الخسارة
+                resetGame(); 
             }
         }
 
@@ -372,7 +386,7 @@
                 obstacle.currentCar = getRandomCar();
                 score += 10;
                 gameCoins += 1; 
-                playUSD += 0.00025; // أرباح اللاعب ترتفع فقط من اجتياز العقارب واللعب
+                playUSD += 0.00025; 
                 updateBalances();
             }
 
@@ -411,7 +425,6 @@
             alert("✅ تم حفظ الإيميل وعنوان المحفظة بنجاح!");
         }
 
-        // زر مشاهدة إعلان اختياري إذا أراد اللاعب مشاهدته (أرباحه تذهب للمالك أيضاً لزيادة استدامة البوت)
         function watchExtraAdForFun() {
             if (adController) {
                 adController.show().then(() => {
