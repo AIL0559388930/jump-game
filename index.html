@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعدين وعملات A - مغامرة اللاعب</title>
+    <title>تعدين عملة A - مغامرة اللاعب</title>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -85,23 +85,6 @@
             padding-top: 6px;
             text-align: center;
         }
-        .wallet-input {
-            width: 100%;
-            padding: 8px;
-            font-size: 12px;
-            border-radius: 5px;
-            border: 1px solid #7f8c8d;
-            background: #2c3e50;
-            color: #fff;
-            box-sizing: border-box;
-            margin-bottom: 6px;
-            direction: ltr;
-            text-align: left;
-        }
-        .wallet-input.ar {
-            direction: rtl;
-            text-align: right;
-        }
         .wallet-btn-group {
             display: flex;
             gap: 5px;
@@ -117,9 +100,6 @@
             cursor: pointer;
             font-weight: bold;
             flex: 1;
-        }
-        .withdraw-btn {
-            background-color: #27ae60;
         }
         .support-btn {
             background-color: #8e44ad;
@@ -159,68 +139,32 @@
         
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- لوحة تعدين وحساب اللاعب -->
+        <!-- لوحة تعدين وحساب اللاعب النظيفة -->
         <div class="ton-wallet-box">
-            <div class="wallet-header">💎 رصيد التعدين والمحفظة</div>
+            <div class="wallet-header">💎 رصيد التعدين المباشر</div>
             
             <div class="wallet-balance" style="justify-content: center; font-size: 15px;">
                 <span>إجمالي عملات A المعدنة: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
             </div>
 
             <div class="wallet-total">
-                🚀 حالة التعدين: نشط ومستمر مع كل قفزة واجتياز!
+                🚀 التعدين نشط ومستمر تلقائياً مع اللعب!
             </div>
             
-            <input type="email" id="playerEmail" class="wallet-input ar" placeholder="اكتب بريدك الإلكتروني (الإيميل) هنا">
-            <input type="text" id="walletAddress" class="wallet-input" placeholder="اكتب عنوان محفظة TON هنا (EQ...)">
-            
-            <!-- مجموعة الأزرار الأولى -->
+            <!-- أزرار التحكم والنسخ والدعم -->
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="saveInfo()">حفظ البيانات</button>
-                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
-            </div>
-
-            <!-- مجموعة الأزرار الثانية -->
-            <div class="wallet-btn-group">
-                <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
-                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم</button>
+                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ رابط اللعبة</button>
+                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم الفني</button>
             </div>
         </div>
     </div>
 
     <script>
-        const BOT_TOKEN = "9291259275:AAG1gzTgTwf2B0bhCaXEU-uwCmNPVtBIWDU"; 
-        const ADMIN_CHAT_ID = "6900706731";
-
-        async function sendTelegramNotification(message) {
-            try {
-                let response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: ADMIN_CHAT_ID,
-                        text: message
-                    })
-                });
-                return response.ok;
-            } catch (error) {
-                console.error('Telegram Error:', error);
-                return false;
-            }
-        }
-
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
-        
-        let savedEmail = localStorage.getItem('pe_email') || "";
-        let savedWallet = localStorage.getItem('pe_wallet') || "";
-
-        if(savedEmail) document.getElementById("playerEmail").value = savedEmail;
-        if(savedWallet) document.getElementById("walletAddress").value = savedWallet;
-
         let isGameOver = false;
 
         let amir = {
@@ -266,7 +210,6 @@
             });
         }
 
-        // إظهار رسالة التعدين العائمة المتحركة
         function showMiningPopup() {
             const alertBox = document.getElementById("miningAlert");
             alertBox.style.display = "block";
@@ -284,7 +227,6 @@
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
                 
-                // تعدين عملة A عند كل قفزة ناجحة
                 gameCoins += 1;
                 updateBalances();
                 showMiningPopup();
@@ -324,7 +266,7 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 2; // مكافأة تعدين إضافية عند تخطي العقبة
+                gameCoins += 2; 
                 updateBalances();
                 showMiningPopup();
             }
@@ -339,50 +281,6 @@
                 amirBox.y + amirBox.height > carBox.y
             ) {
                 isGameOver = true;
-            }
-        }
-
-        function saveInfo() {
-            let email = document.getElementById("playerEmail").value.trim();
-            let addr = document.getElementById("walletAddress").value.trim();
-            
-            if (!email || !email.includes("@")) {
-                alert("⚠️ الرجاء إدخال بريد إلكتروني صحيح.");
-                return;
-            }
-            if (addr.length < 5) {
-                alert("⚠️ الرجاء إدخال عنوان محفظة TON صحيح.");
-                return;
-            }
-
-            localStorage.setItem('pe_email', email);
-            localStorage.setItem('pe_wallet', addr);
-            alert("✅ تم حفظ بيانات التعدين بنجاح!");
-        }
-
-        async function requestWithdraw() {
-            let email = document.getElementById("playerEmail").value.trim();
-            let addr = document.getElementById("walletAddress").value.trim();
-
-            if (!email || !addr) {
-                alert("⚠️ الرجاء إدخال وحفظ الإيميل وعنوان المحفظة أولاً.");
-                return;
-            }
-
-            if (gameCoins < 100) {
-                alert(`⚠️ رصيدك (${gameCoins} عملة A) أقل من الحد الأدنى للسحب (100 عملة A). استمر في اللعب والتعدين!`);
-                return;
-            }
-
-            let msg = `⛏️ طلب سحب رصيد تعدين عملة A جديد!\n📧 الإيميل: ${email}\n📍 محفظة TON: ${addr}\n💎 الكمية: ${gameCoins} عملة A`;
-            let sent = await sendTelegramNotification(msg);
-
-            if (sent) {
-                alert("✅ تم إرسال طلب السحب بنجاح إلى الإدارة وسيتم مراجعته وتحويل الأرباح قريباً!");
-                gameCoins = 0;
-                updateBalances();
-            } else {
-                alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
             }
         }
 
