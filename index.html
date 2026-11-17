@@ -107,6 +107,18 @@
         .copy-btn {
             background-color: #e67e22;
         }
+        /* زر السحب المعطل */
+        .disabled-withdraw-btn {
+            background-color: #7f8c8d;
+            color: #bdc3c7;
+            border: none;
+            padding: 8px;
+            font-size: 12px;
+            border-radius: 5px;
+            cursor: not-allowed;
+            font-weight: bold;
+            flex: 1;
+        }
         /* رسالة منبه التعدين العائمة */
         #miningAlert {
             position: fixed;
@@ -139,7 +151,7 @@
         
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- لوحة تعدين وحساب اللاعب النظيفة -->
+        <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 رصيد التعدين المباشر</div>
             
@@ -151,9 +163,13 @@
                 🚀 التعدين نشط ومستمر تلقائياً مع اللعب!
             </div>
             
-            <!-- أزرار التحكم والنسخ والدعم -->
+            <!-- أزرار التحكم والنسخ والسحب المعطل والدعم -->
             <div class="wallet-btn-group">
-                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ رابط اللعبة</button>
+                <button class="disabled-withdraw-btn" onclick="alert('⚠️ خاصية سحب العملات مغلقة حالياً وسيتم تفعيلها قريباً!')">🔒 سحب عملة A (قريباً)</button>
+            </div>
+
+            <div class="wallet-btn-group">
+                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
                 <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم الفني</button>
             </div>
         </div>
