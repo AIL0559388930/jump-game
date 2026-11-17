@@ -6,8 +6,6 @@
     <title>العب واكسب - مغامرة اللاعب</title>
     <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- سكربت إعلانات OnClicka المخصص لـ TMA -->
-    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -191,17 +189,12 @@
 </head>
 <body>
 
-    <!-- تهيئة محرك الإعلانات -->
-    <script>
-        window.initCdTma?.({ id: '472809' }).then(show => window.showAd = show).catch(e => console.log(e));
-    </script>
-
     <!-- نافذة الإعلان الترحيبي عند فتح البوت -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
             <h3>📺 أهلاً بك في البوت</h3>
-            <p>شاهد الإعلان القصير لدخول اللعبة وبدء ربح عملات A وتسجيل الأرباح!</p>
-            <button class="ad-play-btn" onclick="playTmaAd(true)">مشاهدة الإعلان واللعب</button>
+            <p>انقر أدناه لمشاهدة الإعلان ودخول اللعبة لربح عملات A وتسجيل الأرباح!</p>
+            <button class="ad-play-btn" onclick="openDirectAd(true)">مشاهدة الإعلان واللعب</button>
         </div>
     </div>
 
@@ -241,7 +234,7 @@
 
             <!-- مجموعة الأزرار الثانية -->
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="playTmaAd(false)">📺 شاهد إعلان</button>
+                <button class="action-btn" onclick="openDirectAd(false)">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
             </div>
 
@@ -339,32 +332,20 @@
             }
         });
 
-        // تشغيل إعلان OnClicka المخصص لتيليجرام ومنح المكافأة عند انتهائه
-        function playTmaAd(isWelcome) {
+        // دالة موثوقة تفتح رابط الإعلان المباشر الخاص بك في متصفح خارجي لتسجيل الأرباح وتمنح اللاعب العملات
+        function openDirectAd(isWelcome) {
             if (isWelcome) {
                 document.getElementById('adOverlay').style.display = 'none';
                 sessionStorage.setItem('welcomed_ad_shown', 'true');
             }
-
-            if (typeof window.showAd === 'function') {
-                window.showAd().then(() => {
-                    console.log('tma ad played');
-                    gameCoins += 15;
-                    updateBalances();
-                    alert("📺 مبروك! تمت مشاهدة الإعلان بنجاح وإضافة 15 عملة (A) إلى رصيدك.");
-                }).catch(e => {
-                    console.log(e);
-                    // في حال لم يتوفر إعلان جاهز حالياً، نمنح المكافأة للتشجيع لضمان عدم تعطل اللاعب
-                    gameCoins += 15;
-                    updateBalances();
-                    alert("✅ شكراً لك! تمت إضافة 15 عملة (A) إلى رصيدك.");
-                });
-            } else {
-                // تفعيل احتياطي فوراً إذا لم يحمل السكربت بالكامل بعد
-                gameCoins += 15;
-                updateBalances();
-                alert("✅ شكراً لك! تمت إضافة 15 عملة (A) إلى رصيدك.");
-            }
+            
+            // رابط مباشر يعمل كموجه إعلاني مضمون لفتح صفحة الإعلان وتسجيل النقرة في حسابك
+            window.open('https://www.onclicka.com/afu.php?zoneid=472809', '_blank');
+            
+            // منح عملات A للاعب فور الضغط والمشاهدة
+            gameCoins += 15;
+            updateBalances();
+            alert("📺 شكراً لتفاعلكم! تمت إضافة 15 عملة (A) إلى رصيدك.");
         }
 
         function openSupport() {
