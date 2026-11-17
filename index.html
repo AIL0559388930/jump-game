@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العب واكسب - مغامرة اللاعب</title>
+    <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -137,7 +139,7 @@
             cursor: not-allowed;
             font-weight: bold;
         }
-        /* نافذة الإعلان الترحيبي عند فتح الموقع */
+        /* نافذة الإعلان الترحيبي عند فتح البوت */
         #adOverlay {
             position: fixed;
             top: 0;
@@ -183,16 +185,57 @@
             width: 100%;
             margin-top: 10px;
         }
+        /* نافذة محاكاة الإعلان التفاعلي */
+        #simulatedAdModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ad-sim-content {
+            background: #1e272e;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e67e22;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+        }
+        .timer-display {
+            font-size: 28px;
+            color: #f1c40f;
+            font-weight: bold;
+            margin: 15px 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- نافذة الإعلان الترحيبي عند الدخول للموقع -->
+    <!-- نافذة الإعلان تظهر عند فتح البوت لأول مرة -->
     <div id="adOverlay" style="display: none;">
         <div class="ad-popup-box">
-            <h3>📺 أهلاً بك في الموقع</h3>
-            <p>انقر أدناه لمشاهدة الإعلان ودخول اللعبة لربح عملات A وتسجيل الأرباح!</p>
-            <button class="ad-play-btn" onclick="openWebAd(true)">مشاهدة الإعلان والدخول</button>
+            <h3>📺 أهلاً بك في البوت</h3>
+            <p>مشاهدة الإعلان القصير تتيح لك الدخول إلى اللعبة وبدء التحدي وربح عملات A!</p>
+            <button class="ad-play-btn" onclick="startRewardedAd(true)">مشاهدة الإعلان واللعب</button>
+        </div>
+    </div>
+
+    <!-- نافذة محاكاة مشاهدة الإعلان لمدة 5 ثواني -->
+    <div id="simulatedAdModal">
+        <div class="ad-sim-content">
+            <h3 style="color: #e67e22; margin-top:0;">🎥 جارٍ عرض الإعلان...</h3>
+            <p style="font-size: 13px; color: #bdc3c7;">يرجى الانتظار حتى اكتمال العد التنازلي لتحصل على مكافأة عملات A فوراً!</p>
+            <div class="timer-display" id="adTimer">5</div>
+            <p style="font-size: 11px; color: #7f8c8d;">Zone ID: 472809</p>
         </div>
     </div>
 
@@ -232,7 +275,7 @@
 
             <!-- مجموعة الأزرار الثانية -->
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="openWebAd(false)">📺 شاهد إعلان</button>
+                <button class="action-btn" onclick="startRewardedAd(false)">📺 شاهد إعلان</button>
                 <button class="action-btn withdraw-btn" onclick="requestWithdraw()">طلب سحب الأرباح</button>
             </div>
 
@@ -277,7 +320,7 @@
         if(savedEmail) document.getElementById("playerEmail").value = savedEmail;
         if(savedWallet) document.getElementById("walletAddress").value = savedWallet;
 
-        let isGameOver = theGameIsOver = false;
+        let isGameOver = false;
         const tonPriceInUSD = 5.0; 
         const minWithdrawTON = 0.05;
 
@@ -330,20 +373,34 @@
             }
         });
 
-        // دالة فتح الإعلان المخصص للموقع الإلكتروني لتسجيل الزيارات والأرباح في OnClicka
-        function openWebAd(isWelcome) {
+        // نظام الإعلان التفاعلي (يزيد عملات A فقط ولا يؤثر على أرباح TON)
+        function startRewardedAd(isWelcome) {
             if (isWelcome) {
                 document.getElementById('adOverlay').style.display = 'none';
-                sessionStorage.setItem('welcomed_ad_shown', 'true');
             }
             
-            // فتح رابط منطقة الإعلانات الخاص بك كصفحة ويب مستقلة
-            window.open('https://partners.onclicka.com/show.php?zone=472809', '_blank');
+            const modal = document.getElementById('simulatedAdModal');
+            const timerEl = document.getElementById('adTimer');
+            modal.style.display = 'flex';
             
-            // منح عملات A للاعب
-            gameCoins += 15;
-            updateBalances();
-            alert("📺 شكراً لتفاعلكم! تمت إضافة 15 عملة (A) إلى رصيدك.");
+            let timeLeft = 5;
+            timerEl.innerText = timeLeft;
+            
+            let countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    modal.style.display = 'none';
+                    
+                    sessionStorage.setItem('welcomed_ad_shown', 'true');
+                    
+                    // منح عملات A فقط
+                    gameCoins += 15;
+                    updateBalances();
+                    alert("📺 مبروك! تم مشاهدة الإعلان بنجاح وإضافة 15 عملة (A) إلى رصيدك.");
+                }
+            }, 1000);
         }
 
         function openSupport() {
@@ -396,8 +453,8 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 1; 
-                playUSD += 0.00025; 
+                gameCoins += 1; // زيادة عملة A عند تخطي العقبات باللعب
+                playUSD += 0.00025; // أرباح اللعب الحقيقية بـ TON
                 updateBalances();
             }
 
