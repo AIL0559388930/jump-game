@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>العب واكسب - مغامرة اللاعب</title>
-    <!-- مكتبة إعلانات Adsgram SDK المحدثة -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -316,22 +316,35 @@
             }
         });
 
-        // تهيئة وحدة الإعلانات بمعرفك الجديد (60176)
-        const adController = window.Adsgram ? window.Adsgram.init({ blockId: "60176" }) : null;
-
-        // دالة تشغيل الإعلان الترحيبي أو الإضافي
+        // دالة تشغيل إعلان OnClicka (Zone ID: 472809)
         function playWelcomeAd() {
-            if (adController) {
-                adController.show().then(() => {
-                    sessionStorage.setItem('welcomed_ad_shown', 'true');
-                    document.getElementById('adOverlay').style.display = 'none';
-                }).catch((result) => {
-                    console.log("Ad error or skipped", result);
-                    alert("يجب إكمال مشاهدة الإعلان للدخول.");
+            console.log("محاولة تشغيل إعلان OnClicka لمعرف المنطقة: 472809");
+            
+            // تحقق من توفر سكريبت OnClicka أو تشغيل محاكاة ناجحة لتجربة اللعبة بسلاسة
+            if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
+                OnClickaAds.showRewarded({
+                    zoneId: 472809,
+                    onSuccess: function() {
+                        sessionStorage.setItem('welcomed_ad_shown', 'true');
+                        document.getElementById('adOverlay').style.display = 'none';
+                    },
+                    onError: function(error) {
+                        console.log("خطأ في عرض الإعلان:", error);
+                        // السماح بالدخول في حال حدوث خطأ مؤقت لضمان تجربة المستخدم
+                        sessionStorage.setItem('welcomed_ad_shown', 'true');
+                        document.getElementById('adOverlay').style.display = 'none';
+                    }
                 });
             } else {
-                sessionStorage.setItem('welcomed_ad_shown', 'true');
-                document.getElementById('adOverlay').style.display = 'none';
+                // وضع محاكاة لتخطي الإعلان والبدء باللعب فوراً (لحين تحميل سكريبت الشبكة بالكامل)
+                setTimeout(function() {
+                    sessionStorage.setItem('welcomed_ad_shown', 'true');
+                    document.getElementById('adOverlay').style.display = 'none';
+                    
+                    // منح مكافأة تجريبية خفيفة لتشجيع اللاعب
+                    gameCoins += 5;
+                    updateBalances();
+                }, 500);
             }
         }
 
@@ -426,15 +439,24 @@
         }
 
         function watchExtraAdForFun() {
-            if (adController) {
-                adController.show().then(() => {
-                    alert("📺 شكراً لمشاهدة الإعلان ودعم استمرار البوت!");
-                }).catch((result) => {
-                    console.log("Ad error or skipped", result);
-                    alert("لم تكمل مشاهدة الإعلان.");
+            // استدعاء الإعلان الإضافي عبر OnClicka
+            if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
+                OnClickaAds.showRewarded({
+                    zoneId: 472809,
+                    onSuccess: function() {
+                        gameCoins += 10;
+                        playUSD += 0.001;
+                        updateBalances();
+                        alert("📺 شكراً لمشاهدة الإعلان! تمت إضافة مكافأة لرصيدك.");
+                    },
+                    onError: function() {
+                        alert("تعذر عرض الإعلان حالياً، حاول لاحقاً.");
+                    }
                 });
             } else {
-                alert("📺 شكراً لدعم البوت (وضع التجربة المحلي).");
+                gameCoins += 10;
+                updateBalances();
+                alert("📺 شكراً لدعم البوت وتمت إضافة 10 عملات (وضع التجربة).");
             }
         }
 
