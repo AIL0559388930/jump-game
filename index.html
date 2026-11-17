@@ -6,6 +6,8 @@
     <title>العب واكسب - مغامرة اللاعب</title>
     <!-- تضمين مكتبة تيليجرام Web App الرسمية -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- تضمين سكريبت OnClicka المخصص لـ TMA لمعرف المنطقة 472809 -->
+    <script src="https://onclck.com/sdk/tma.js" data-zone="472809"></script>
     <style>
         body {
             font-family: Tahoma, sans-serif;
@@ -320,7 +322,6 @@
         function playWelcomeAd() {
             console.log("محاولة تشغيل إعلان OnClicka لمعرف المنطقة: 472809");
             
-            // تحقق من توفر سكريبت OnClicka أو تشغيل محاكاة ناجحة لتجربة اللعبة بسلاسة
             if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
                 OnClickaAds.showRewarded({
                     zoneId: 472809,
@@ -330,18 +331,15 @@
                     },
                     onError: function(error) {
                         console.log("خطأ في عرض الإعلان:", error);
-                        // السماح بالدخول في حال حدوث خطأ مؤقت لضمان تجربة المستخدم
                         sessionStorage.setItem('welcomed_ad_shown', 'true');
                         document.getElementById('adOverlay').style.display = 'none';
                     }
                 });
             } else {
-                // وضع محاكاة لتخطي الإعلان والبدء باللعب فوراً (لحين تحميل سكريبت الشبكة بالكامل)
+                // وضع احتياطي آمن في حال تأخر تحميل السكريبت الخارجي
                 setTimeout(function() {
                     sessionStorage.setItem('welcomed_ad_shown', 'true');
                     document.getElementById('adOverlay').style.display = 'none';
-                    
-                    // منح مكافأة تجريبية خفيفة لتشجيع اللاعب
                     gameCoins += 5;
                     updateBalances();
                 }, 500);
@@ -439,7 +437,6 @@
         }
 
         function watchExtraAdForFun() {
-            // استدعاء الإعلان الإضافي عبر OnClicka
             if (typeof OnClickaAds !== 'undefined' && typeof OnClickaAds.showRewarded === 'function') {
                 OnClickaAds.showRewarded({
                     zoneId: 472809,
