@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -200,9 +200,210 @@
             font-size: 13px;
             font-weight: 900;
             box-shadow: 0 4px 12px rgba(255, 204, 0, 0.35);
-            z-index: 1000;
+            z-index: 2000;
             display: none;
             transition: opacity 0.3s ease;
+        }
+
+        /* واجهة المتجر المنبثقة المنسقة (أسود وأصفر) */
+        .store-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.94);
+            z-index: 1500;
+            overflow-y: auto;
+            padding: 16px 12px 32px;
+            text-align: right;
+        }
+
+        .store-modal-overlay.open {
+            display: block;
+        }
+
+        .store-sheet {
+            max-width: 520px;
+            margin: 0 auto;
+            background-color: var(--card-black);
+            border: 2px solid var(--yellow);
+            border-radius: 16px;
+            padding: 16px;
+            color: var(--yellow);
+            box-shadow: 0 0 22px rgba(255, 204, 0, 0.22);
+        }
+
+        .store-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-back-game {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .btn-back-game:hover {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .store-status-pill {
+            border: 1.5px solid var(--yellow);
+            background-color: var(--yellow-dim);
+            color: var(--yellow);
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .store-title-box {
+            border: 2px solid var(--yellow);
+            border-radius: 14px;
+            padding: 14px;
+            background-color: #000000;
+            margin-bottom: 14px;
+        }
+
+        .store-title-box h3 {
+            margin: 0 0 6px;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-title-box p {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--yellow-soft);
+            font-weight: 700;
+        }
+
+        .store-player-info {
+            border-top: 1px dashed var(--yellow);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .store-tab-btn {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .store-tab-btn.active {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .store-panel {
+            display: none;
+        }
+
+        .store-panel.active {
+            display: block;
+        }
+
+        .store-card {
+            border: 2px solid var(--yellow);
+            border-radius: 12px;
+            padding: 14px;
+            background-color: #000000;
+            margin-bottom: 12px;
+        }
+
+        .store-card h4 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-card p {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--yellow-soft);
+        }
+
+        .store-price {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--yellow);
+            margin-bottom: 10px;
+        }
+
+        .store-yellow-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px 14px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .store-yellow-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .store-input {
+            width: 100%;
+            background-color: #0a0a0a;
+            color: var(--yellow);
+            border: 1.5px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .store-input::placeholder {
+            color: rgba(255, 204, 0, 0.55);
+        }
+
+        .store-notice {
+            display: none;
+            margin-top: 12px;
+            border: 2px solid var(--yellow);
+            background-color: var(--yellow-dim);
+            color: var(--yellow);
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 13px;
+            font-weight: 900;
         }
     </style>
 </head>
@@ -219,8 +420,8 @@
 
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- الزر الوحيد للانتقال إلى صفحة المتجر -->
-        <button class="store-nav-btn" onclick="openStorePage()">متجر بيع وشراء عملة A</button>
+        <!-- الزر الوحيد للانتقال إلى المتجر -->
+        <button class="store-nav-btn" onclick="openStoreModal()">متجر بيع وشراء عملة A</button>
 
         <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
@@ -242,6 +443,72 @@
                 <button class="action-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
                 <button class="action-btn" onclick="openSupport()">🎧 الدعم الفني</button>
             </div>
+        </div>
+    </div>
+
+    <!-- واجهة متجر بيع وشراء عملة A (يدوي وموقّف حالياً) -->
+    <div id="storeModal" class="store-modal-overlay">
+        <div class="store-sheet">
+            <div class="store-top-bar">
+                <button class="btn-back-game" onclick="closeStoreModal()">← العودة إلى اللعبة</button>
+                <span class="store-status-pill">الوضع: يدوي وموقّف حالياً</span>
+            </div>
+
+            <div class="store-title-box">
+                <h3>متجر بيع وشراء عملة A</h3>
+                <p>إدارة يدوية بالكامل — التنفيذ والخصم التلقائي متوقفان حالياً.</p>
+                <div class="store-player-info">
+                    <span>اللاعب: <span id="storePlayerName">لاعب</span> (<span id="storePlayerId">guest</span>)</span>
+                    <span>رصيدك: <span id="storeBalanceVal">0</span> A</span>
+                </div>
+            </div>
+
+            <div class="store-tabs">
+                <button id="tabStoreBtn" class="store-tab-btn active" onclick="switchStoreTab('store')">متجر A</button>
+                <button id="tabTradeBtn" class="store-tab-btn" onclick="switchStoreTab('trade')">بيع وشراء A</button>
+            </div>
+
+            <!-- قسم متجر A -->
+            <div id="panelStore" class="store-panel active">
+                <div class="store-card">
+                    <h4>باقة متجر A الأولى</h4>
+                    <p>معاينة عرض داخل متجر A — المعالجة يدوية ومتوقفة حالياً.</p>
+                    <div class="store-price">السعر: 5,000 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الأولى (5,000 A)')">
+                        طلب شراء (موقّف حالياً)
+                    </button>
+                </div>
+
+                <div class="store-card">
+                    <h4>باقة متجر A الثانية</h4>
+                    <p>معاينة عرض داخل متجر A — المعالجة يدوية ومتوقفة حالياً.</p>
+                    <div class="store-price">السعر: 15,000 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الثانية (15,000 A)')">
+                        طلب شراء (موقّف حالياً)
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم بيع وشراء A -->
+            <div id="panelTrade" class="store-panel">
+                <div class="store-card">
+                    <h4>شراء عملة A (يدوي - موقّف حالياً)</h4>
+                    <input type="number" id="storeBuyQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للشراء" min="1">
+                    <button class="store-yellow-btn" onclick="triggerPausedTradeAction('شراء عملة A', 'storeBuyQty')">
+                        إرسال طلب شراء (موقّف حالياً)
+                    </button>
+                </div>
+
+                <div class="store-card">
+                    <h4>بيع / استبدال عملة A (يدوي - موقّف حالياً)</h4>
+                    <input type="number" id="storeSellQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للبيع أو الاستبدال" min="1">
+                    <button class="store-yellow-btn" onclick="triggerPausedTradeAction('بيع / استبدال عملة A', 'storeSellQty')">
+                        إرسال طلب بيع (موقّف حالياً)
+                    </button>
+                </div>
+            </div>
+
+            <div id="storeNoticeBox" class="store-notice"></div>
         </div>
     </div>
 
@@ -293,7 +560,7 @@
         }
 
         function copyGameLink() {
-            const gameUrl = "https://jump-game-9pbu.vercel.app";
+            const gameUrl = window.location.href || "https://jump-game-9pbu.vercel.app";
             navigator.clipboard.writeText(gameUrl).then(() => {
                 alert("📋 تم نسخ رابط اللعبة بنجاح!");
             }).catch(() => {
@@ -313,7 +580,7 @@
             window.open('https://t.me/AIL05593889', '_blank');
         }
 
-        function openStorePage() {
+        function openStoreModal() {
             let userId = "guest";
             let userName = "لاعب";
 
@@ -328,17 +595,44 @@
                 userName = tgUser.first_name || tgUser.username || "لاعب";
             }
 
-            // غيّر "store.html" إلى الرابط الكامل لصفحة المتجر عند الرفع إذا لزم الأمر
-            const storeUrl = new URL("store.html", window.location.href);
-            storeUrl.searchParams.set("user_id", userId);
-            storeUrl.searchParams.set("name", userName);
-            storeUrl.searchParams.set("balance", gameCoins);
+            document.getElementById("storePlayerId").textContent = userId;
+            document.getElementById("storePlayerName").textContent = userName;
+            document.getElementById("storeBalanceVal").textContent = Number(gameCoins).toLocaleString();
+            document.getElementById("storeNoticeBox").style.display = "none";
+            document.getElementById("storeModal").classList.add("open");
+        }
 
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.openLink(storeUrl.toString());
-            } else {
-                window.location.href = storeUrl.toString();
-            }
+        function closeStoreModal() {
+            document.getElementById("storeModal").classList.remove("open");
+        }
+
+        function switchStoreTab(tabName) {
+            const isStore = tabName === "store";
+            document.getElementById("tabStoreBtn").classList.toggle("active", isStore);
+            document.getElementById("tabTradeBtn").classList.toggle("active", !isStore);
+            document.getElementById("panelStore").classList.toggle("active", isStore);
+            document.getElementById("panelTrade").classList.toggle("active", !isStore);
+            document.getElementById("storeNoticeBox").style.display = "none";
+        }
+
+        function showStoreNotice(msg) {
+            const box = document.getElementById("storeNoticeBox");
+            box.textContent = msg;
+            box.style.display = "block";
+        }
+
+        function triggerPausedStoreAction(label) {
+            showStoreNotice(
+                `النظام يعمل يدوياً وهو موقّف حالياً (${label}). لم يتم خصم أي رصيد من حسابك.`
+            );
+        }
+
+        function triggerPausedTradeAction(actionLabel, inputId) {
+            const val = document.getElementById(inputId).value.trim();
+            const qtyStr = val ? ` — الكمية المدخلة: ${Number(val).toLocaleString()} A` : "";
+            showStoreNotice(
+                `طلب "${actionLabel}"${qtyStr} متوقف حالياً ضمن الإدارة اليدوية ولم يتم تنفيذ أي عملية.`
+            );
         }
 
         function makeJump() {
@@ -470,7 +764,7 @@
             isGameOver = false;
         }
 
-        updateBalances();
+        updateBalances() 
         loop();
     </script>
 </body>
