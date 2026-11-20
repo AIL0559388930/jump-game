@@ -4,134 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تعدين عملة A - مغامرة اللاعب</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg-black: #000000;
+            --card-black: #0a0a0a;
+            --yellow: #ffcc00;
+            --yellow-soft: #ffe066;
+            --yellow-dim: rgba(255, 204, 0, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Tahoma, sans-serif;
-            background-color: #2c3e50;
+            background-color: var(--bg-black);
             text-align: center;
             margin: 0;
             padding: 10px;
-            color: #fff;
+            color: var(--yellow);
         }
+
         .game-container {
-            background: #34495e;
-            max-width: 400px;
+            background: var(--card-black);
+            border: 2px solid var(--yellow);
+            max-width: 420px;
             margin: 10px auto;
             padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            box-shadow: 0 0 18px rgba(255, 204, 0, 0.16);
         }
+
+        .game-container h2 {
+            color: var(--yellow);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
         canvas {
             background: #87CEEB;
+            border: 2px solid var(--yellow);
             border-radius: 10px;
             display: block;
             margin: 0 auto;
+            max-width: 100%;
         }
+
         .score-board {
             font-size: 18px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: bold;
+            color: var(--yellow);
         }
+
         .jump-btn {
-            background-color: #d35400;
-            color: white;
-            border: none;
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
             padding: 12px 20px;
             font-size: 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             margin-top: 10px;
             width: 100%;
-            font-weight: bold;
-            box-shadow: 0 4px #ba4a00;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.25);
+            transition: all 0.15s ease;
         }
+
+        .jump-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
         .jump-btn:active {
             transform: translateY(2px);
-            box-shadow: 0 2px #ba4a00;
         }
-        .ton-wallet-box {
-            background: #1b2631;
-            border: 2px solid #0088cc;
+
+        /* الزر الوحيد للانتقال إلى صفحة المتجر */
+        .store-nav-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
+            padding: 13px 18px;
+            font-size: 15px;
             border-radius: 10px;
+            cursor: pointer;
             margin-top: 12px;
-            padding: 10px;
-            text-align: right;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 14px rgba(255, 204, 0, 0.3);
+            transition: all 0.15s ease;
         }
+
+        .store-nav-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .store-nav-btn:active {
+            transform: translateY(2px);
+        }
+
+        .ton-wallet-box {
+            background: #000000;
+            border: 2px solid var(--yellow);
+            border-radius: 12px;
+            margin-top: 12px;
+            padding: 12px;
+            text-align: right;
+            color: var(--yellow);
+        }
+
         .wallet-header {
-            font-size: 13px;
-            color: #f1c40f;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--yellow);
+            font-weight: 900;
+            margin-bottom: 6px;
             text-align: center;
         }
+
         .wallet-balance {
-            font-size: 13px;
-            color: #bdc3c7;
+            font-size: 14px;
+            color: var(--yellow-soft);
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             direction: ltr;
         }
+
         .wallet-balance span {
             text-align: right;
         }
+
         .wallet-total {
             font-size: 13px;
-            color: #2ecc71;
+            color: var(--yellow);
             font-weight: bold;
-            margin-bottom: 8px;
-            border-top: 1px dashed #4b6584;
-            padding-top: 6px;
+            margin-bottom: 10px;
+            border-top: 1px dashed var(--yellow);
+            padding-top: 8px;
             text-align: center;
         }
+
         .wallet-btn-group {
             display: flex;
-            gap: 5px;
-            margin-top: 5px;
+            gap: 6px;
+            margin-top: 6px;
         }
+
         .action-btn {
-            background-color: #0088cc;
-            color: white;
-            border: none;
+            background-color: var(--yellow);
+            color: #000000;
+            border: 1.5px solid var(--yellow);
             padding: 8px;
             font-size: 12px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 800;
             flex: 1;
+            transition: all 0.15s ease;
         }
-        .support-btn {
-            background-color: #8e44ad;
+
+        .action-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
         }
-        .copy-btn {
-            background-color: #e67e22;
-        }
-        /* زر السحب المعطل */
+
         .disabled-withdraw-btn {
-            background-color: #7f8c8d;
-            color: #bdc3c7;
-            border: none;
+            background-color: #000000;
+            color: var(--yellow-soft);
+            border: 1.5px dashed var(--yellow);
             padding: 8px;
             font-size: 12px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: not-allowed;
-            font-weight: bold;
+            font-weight: 800;
             flex: 1;
         }
-        /* رسالة منبه التعدين العائمة */
+
         #miningAlert {
             position: fixed;
             top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            background: #27ae60;
-            color: white;
+            background: var(--yellow);
+            color: #000000;
+            border: 2px solid #000000;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.35);
             z-index: 1000;
             display: none;
             transition: opacity 0.3s ease;
@@ -141,41 +209,48 @@
 <body>
 
     <!-- رسالة تعدين عملة A المتحركة -->
-    <div id="miningAlert">⛏️ تم تعدين +1 عملة A بنجاح!</div>
+    <div id="miningAlert">⛏️ تم تعدين عملة A بنجاح!</div>
 
     <div class="game-container">
         <h2>⛏️ منصة تعدين عملة A</h2>
         <div class="score-board">النقاط: <span id="score">0</span></div>
-        
+
         <canvas id="gameCanvas" width="350" height="170"></canvas>
-        
+
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
+
+        <!-- الزر الوحيد للانتقال إلى صفحة المتجر -->
+        <button class="store-nav-btn" onclick="openStorePage()">متجر بيع وشراء عملة A</button>
 
         <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 رصيد التعدين المباشر</div>
-            
+
             <div class="wallet-balance" style="justify-content: center; font-size: 15px;">
-                <span>إجمالي عملات A المعدنة: <span id="gameCoins" style="color: #2ecc71; font-weight: bold;">0</span> A</span>
+                <span>إجمالي عملات A المعدنة: <span id="gameCoins" style="color: #ffcc00; font-weight: 900;">0</span> A</span>
             </div>
 
             <div class="wallet-total">
                 🚀 التعدين نشط ومستمر تلقائياً مع اللعب!
             </div>
-            
-            <!-- أزرار التحكم والنسخ والسحب المعطل والدعم -->
+
             <div class="wallet-btn-group">
-                <button class="disabled-withdraw-btn" onclick="alert('⚠️ خاصية سحب العملات مغلقة حالياً وسيتم تفعيلها قريباً!')">🔒 سحب عملة A (قريباً)</button>
+                <button class="disabled-withdraw-btn" onclick="alert('⚠️ خاصية سحب العملات مغلقة حالياً وسيتم تفعيلها قريباً!')">🔒 سحب عملة A (موقّف حالياً)</button>
             </div>
 
             <div class="wallet-btn-group">
-                <button class="action-btn copy-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
-                <button class="action-btn support-btn" onclick="openSupport()">🎧 الدعم الفني</button>
+                <button class="action-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
+                <button class="action-btn" onclick="openSupport()">🎧 الدعم الفني</button>
             </div>
         </div>
     </div>
 
     <script>
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
@@ -195,7 +270,7 @@
         };
 
         const carTypes = ["🚙", "🚗", "🚕", "🚐"];
-        
+
         let obstacle = {
             x: 350,
             y: 100,
@@ -238,17 +313,44 @@
             window.open('https://t.me/AIL05593889', '_blank');
         }
 
+        function openStorePage() {
+            let userId = "guest";
+            let userName = "لاعب";
+
+            if (
+                window.Telegram &&
+                window.Telegram.WebApp &&
+                window.Telegram.WebApp.initDataUnsafe &&
+                window.Telegram.WebApp.initDataUnsafe.user
+            ) {
+                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                userId = tgUser.id || "guest";
+                userName = tgUser.first_name || tgUser.username || "لاعب";
+            }
+
+            // غيّر "store.html" إلى الرابط الكامل لصفحة المتجر عند الرفع إذا لزم الأمر
+            const storeUrl = new URL("store.html", window.location.href);
+            storeUrl.searchParams.set("user_id", userId);
+            storeUrl.searchParams.set("name", userName);
+            storeUrl.searchParams.set("balance", gameCoins);
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openLink(storeUrl.toString());
+            } else {
+                window.location.href = storeUrl.toString();
+            }
+        }
+
         function makeJump() {
             if (amir.grounded && !isGameOver) {
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
-                
+
                 gameCoins += 1;
                 updateBalances();
                 showMiningPopup();
-
             } else if (isGameOver) {
-                resetGame(); 
+                resetGame();
             }
         }
 
@@ -282,7 +384,7 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 2; 
+                gameCoins += 2;
                 updateBalances();
                 showMiningPopup();
             }
@@ -309,7 +411,7 @@
             buildings.forEach(b => {
                 ctx.fillStyle = b.color;
                 ctx.fillRect(b.x, 130 - b.height, b.width, b.height);
-                
+
                 ctx.fillStyle = "rgba(255,255,255,0.6)";
                 for (let wx = b.x + 8; wx < b.x + b.width - 8; wx += 12) {
                     for (let wy = 130 - b.height + 10; wy < 120; wy += 15) {
@@ -341,12 +443,12 @@
             if (isGameOver) {
                 ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = "#fff";
+
+                ctx.fillStyle = "#ffcc00";
                 ctx.font = "18px Tahoma";
                 ctx.textAlign = "center";
                 ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
-                
+
                 ctx.font = "13px Tahoma";
                 ctx.fillText("اضغط للبدء والتعدين من جديد", canvas.width / 2, 95);
             }
