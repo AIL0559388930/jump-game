@@ -487,7 +487,6 @@
             </div>
             <div class="wallet-btn-group">
                 <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الإحالة</button>
-                <button class="action-btn" id="claimReferralBtn" onclick="claimReferralReward()">➕ إحالة لاعب (+1,000 A)</button>
             </div>
         </div>
 
@@ -710,20 +709,22 @@
             }
         }
 
-        function claimReferralReward() {
-            refreshReferralWindowIfNeeded();
-
-            if (referralState.invitedThisWeek >= WEEKLY_REFERRAL_CAP) {
-                showCustomAlert(`🚫 وصلت للحد الأسبوعي (${WEEKLY_REFERRAL_CAP} لاعبين أسبوعياً).`);
-                updateBalances();
-                return;
+        function detectIncomingReferralCode() {
+            let startParam = "";
+            if (
+                window.Telegram &&
+                window.Telegram.WebApp &&
+                window.Telegram.WebApp.initDataUnsafe &&
+                window.Telegram.WebApp.initDataUnsafe.start_param
+            ) {
+                startParam = String(window.Telegram.WebApp.initDataUnsafe.start_param);
             }
-
-            referralState.invitedThisWeek += 1;
-            gameCoins += REFERRAL_REWARD;
-            saveReferralState(referralState);
-            updateBalances();
-            showCustomAlert(`🎁 تمت إضافة +${REFERRAL_REWARD.toLocaleString()} عملة A مكافأة إحالة لكل لاعب!`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const refParam = urlParams.get("ref") || "";
+            const code = startParam || refParam;
+            if (code) {
+                localStorage.setItem("pe_incoming_ref", code);
+            }
         }
 
         function mineACoins(requestedAmount) {
@@ -960,15 +961,6 @@
             document.getElementById("referralCountText").innerText =
                 `${referralState.invitedThisWeek} / ${WEEKLY_REFERRAL_CAP}`;
 
-            const refBtn = document.getElementById("claimReferralBtn");
-            if (refBtn) {
-                const isCapped = referralState.invitedThisWeek >= WEEKLY_REFERRAL_CAP;
-                refBtn.disabled = isCapped;
-                refBtn.textContent = isCapped
-                    ? `✅ اكتمل الحد الأسبوعي (${WEEKLY_REFERRAL_CAP})`
-                    : `➕ إحالة لاعب (+${REFERRAL_REWARD.toLocaleString()} A)`;
-            }
-
             localStorage.setItem('pe_score', score);
             localStorage.setItem('pe_coins', gameCoins);
         }
@@ -1082,6 +1074,7 @@
             isGameOver = false;
         }
 
+        detectIncomingReferralCode();
         updateBalances();
         loop();
     </script>
