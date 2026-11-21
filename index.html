@@ -7,11 +7,11 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-black: #3b0707;
-            --card-black: #570d0d;
-            --yellow: #ffcc00;
-            --yellow-soft: #ffe066;
-            --yellow-dim: rgba(255, 204, 0, 0.14);
+            --red-bg: #3b0707;
+            --red-card: #570d0d;
+            --gold: #ffcc00;
+            --gold-soft: #ffe066;
+            --gold-tint: rgba(255, 204, 0, 0.14);
         }
 
         * {
@@ -20,16 +20,16 @@
 
         body {
             font-family: Tahoma, sans-serif;
-            background-color: var(--bg-black);
+            background-color: var(--red-bg);
             text-align: center;
             margin: 0;
             padding: 10px;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .game-container {
-            background: var(--card-black);
-            border: 2px solid var(--yellow);
+            background: var(--red-card);
+            border: 2px solid var(--gold);
             max-width: 420px;
             margin: 10px auto;
             padding: 15px;
@@ -38,7 +38,7 @@
         }
 
         .game-container h2 {
-            color: var(--yellow);
+            color: var(--gold);
             margin-top: 0;
             margin-bottom: 10px;
             font-weight: 900;
@@ -46,7 +46,7 @@
 
         canvas {
             background: #87CEEB;
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             border-radius: 10px;
             display: block;
             margin: 0 auto;
@@ -57,24 +57,24 @@
             font-size: 18px;
             margin-bottom: 10px;
             font-weight: bold;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .daily-cap-box {
-            border: 1.5px solid var(--yellow);
-            background-color: #3b0707;
+            border: 1.5px solid var(--gold);
+            background-color: var(--red-bg);
             border-radius: 10px;
             padding: 8px 10px;
             margin-top: 10px;
             font-size: 13px;
             font-weight: 800;
-            color: var(--yellow-soft);
+            color: var(--gold-soft);
         }
 
         .jump-btn {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             padding: 12px 20px;
             font-size: 16px;
             border-radius: 10px;
@@ -87,8 +87,8 @@
         }
 
         .jump-btn:hover {
-            background-color: #3b0707;
-            color: var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
         }
 
         .jump-btn:active {
@@ -103,9 +103,9 @@
         }
 
         .store-nav-btn {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             padding: 12px 16px;
             font-size: 15px;
             border-radius: 10px;
@@ -117,8 +117,8 @@
         }
 
         .store-nav-btn:hover {
-            background-color: #3b0707;
-            color: var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
         }
 
         .store-nav-btn:active {
@@ -126,9 +126,9 @@
         }
 
         .trade-direct-btn {
-            background-color: #3b0707;
-            color: var(--yellow);
-            border: 2px solid var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
+            border: 2px solid var(--gold);
             padding: 12px 16px;
             font-size: 15px;
             border-radius: 10px;
@@ -140,7 +140,7 @@
         }
 
         .trade-direct-btn:hover {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
         }
 
@@ -149,18 +149,18 @@
         }
 
         .ton-wallet-box {
-            background: #3b0707;
-            border: 2px solid var(--yellow);
+            background: var(--red-bg);
+            border: 2px solid var(--gold);
             border-radius: 12px;
             margin-top: 12px;
             padding: 12px;
             text-align: right;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .wallet-header {
             font-size: 14px;
-            color: var(--yellow);
+            color: var(--gold);
             font-weight: 900;
             margin-bottom: 6px;
             text-align: center;
@@ -168,7 +168,7 @@
 
         .wallet-balance {
             font-size: 14px;
-            color: var(--yellow-soft);
+            color: var(--gold-soft);
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
@@ -182,17 +182,17 @@
 
         .wallet-total {
             font-size: 13px;
-            color: var(--yellow);
+            color: var(--gold);
             font-weight: bold;
             margin-bottom: 10px;
-            border-top: 1px dashed var(--yellow);
+            border-top: 1px dashed var(--gold);
             padding-top: 8px;
             text-align: center;
         }
 
         .referral-details {
             font-size: 12px;
-            color: var(--yellow-soft);
+            color: var(--gold-soft);
             line-height: 1.7;
             margin-bottom: 10px;
             text-align: center;
@@ -205,9 +205,9 @@
         }
 
         .action-btn {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
-            border: 1.5px solid var(--yellow);
+            border: 1.5px solid var(--gold);
             padding: 8px;
             font-size: 12px;
             border-radius: 8px;
@@ -218,14 +218,14 @@
         }
 
         .action-btn:hover {
-            background-color: #3b0707;
-            color: var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
         }
 
         .disabled-withdraw-btn {
-            background-color: #3b0707;
-            color: var(--yellow-soft);
-            border: 1.5px dashed var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold-soft);
+            border: 1.5px dashed var(--gold);
             padding: 8px;
             font-size: 12px;
             border-radius: 8px;
@@ -239,7 +239,7 @@
             top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--yellow);
+            background: var(--gold);
             color: #000000;
             border: 2px solid #000000;
             padding: 8px 16px;
@@ -252,7 +252,6 @@
             transition: opacity 0.3s ease;
         }
 
-        /* نوافذ منبثقة (أحمر وأصفر) */
         .store-modal-overlay {
             display: none;
             position: fixed;
@@ -271,11 +270,11 @@
         .store-sheet {
             max-width: 520px;
             margin: 0 auto;
-            background-color: var(--card-black);
-            border: 2px solid var(--yellow);
+            background-color: var(--red-card);
+            border: 2px solid var(--gold);
             border-radius: 16px;
             padding: 16px;
-            color: var(--yellow);
+            color: var(--gold);
             box-shadow: 0 0 22px rgba(255, 204, 0, 0.22);
         }
 
@@ -289,9 +288,9 @@
         }
 
         .btn-back-game {
-            background-color: #3b0707;
-            color: var(--yellow);
-            border: 2px solid var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
+            border: 2px solid var(--gold);
             border-radius: 10px;
             padding: 8px 14px;
             font-size: 13px;
@@ -300,14 +299,14 @@
         }
 
         .btn-back-game:hover {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
         }
 
         .store-status-pill {
-            border: 1.5px solid var(--yellow);
-            background-color: var(--yellow-dim);
-            color: var(--yellow);
+            border: 1.5px solid var(--gold);
+            background-color: var(--gold-tint);
+            color: var(--gold);
             border-radius: 999px;
             padding: 5px 12px;
             font-size: 12px;
@@ -315,10 +314,10 @@
         }
 
         .store-title-box {
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             border-radius: 14px;
             padding: 14px;
-            background-color: #3b0707;
+            background-color: var(--red-bg);
             margin-bottom: 14px;
         }
 
@@ -326,18 +325,18 @@
             margin: 0 0 6px;
             font-size: 20px;
             font-weight: 900;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .store-title-box p {
             margin: 0 0 10px;
             font-size: 13px;
-            color: var(--yellow-soft);
+            color: var(--gold-soft);
             font-weight: 700;
         }
 
         .store-player-info {
-            border-top: 1px dashed var(--yellow);
+            border-top: 1px dashed var(--gold);
             padding-top: 10px;
             display: flex;
             justify-content: space-between;
@@ -345,7 +344,7 @@
             gap: 8px;
             font-size: 13px;
             font-weight: 900;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .store-tabs {
@@ -356,9 +355,9 @@
         }
 
         .store-tab-btn {
-            background-color: #3b0707;
-            color: var(--yellow);
-            border: 2px solid var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
+            border: 2px solid var(--gold);
             border-radius: 10px;
             padding: 10px;
             font-size: 14px;
@@ -367,7 +366,7 @@
         }
 
         .store-tab-btn.active {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
         }
 
@@ -380,10 +379,10 @@
         }
 
         .store-card {
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             border-radius: 12px;
             padding: 14px;
-            background-color: #3b0707;
+            background-color: var(--red-bg);
             margin-bottom: 12px;
         }
 
@@ -391,21 +390,21 @@
             margin: 0 0 6px;
             font-size: 16px;
             font-weight: 900;
-            color: var(--yellow);
+            color: var(--gold);
         }
 
         .store-card p {
             margin: 0 0 12px;
             font-size: 13px;
-            color: var(--yellow-soft);
+            color: var(--gold-soft);
         }
 
         .store-textarea {
             width: 100%;
             min-height: 95px;
-            background-color: #570d0d;
-            color: var(--yellow);
-            border: 1.5px solid var(--yellow);
+            background-color: var(--red-card);
+            color: var(--gold);
+            border: 1.5px solid var(--gold);
             border-radius: 10px;
             padding: 10px 12px;
             font-family: Tahoma, sans-serif;
@@ -421,9 +420,9 @@
         }
 
         .store-yellow-btn {
-            background-color: var(--yellow);
+            background-color: var(--gold);
             color: #000000;
-            border: 2px solid var(--yellow);
+            border: 2px solid var(--gold);
             border-radius: 10px;
             padding: 10px 14px;
             width: 100%;
@@ -433,8 +432,8 @@
         }
 
         .store-yellow-btn:hover {
-            background-color: #3b0707;
-            color: var(--yellow);
+            background-color: var(--red-bg);
+            color: var(--gold);
         }
 
         .store-yellow-btn:disabled {
@@ -445,9 +444,9 @@
         .store-notice {
             display: none;
             margin-top: 12px;
-            border: 2px solid var(--yellow);
-            background-color: var(--yellow-dim);
-            color: var(--yellow);
+            border: 2px solid var(--gold);
+            background-color: var(--gold-tint);
+            color: var(--gold);
             border-radius: 10px;
             padding: 11px 12px;
             font-size: 13px;
@@ -457,7 +456,6 @@
 </head>
 <body>
 
-    <!-- رسالة تعدين عملة A المتحركة -->
     <div id="miningAlert">⛏️ تم تعدين عملة A بنجاح!</div>
 
     <div class="game-container">
@@ -472,13 +470,11 @@
 
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- أزرار الصفحة الأولى -->
         <div class="main-action-group">
             <button class="store-nav-btn" onclick="openStoreModal('store')">متجر عملة A</button>
             <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
         </div>
 
-        <!-- مكافأة الإحالة الأسبوعية -->
         <div class="ton-wallet-box">
             <div class="wallet-header">🎁 مكافأة الإحالة</div>
             <div class="referral-details">
@@ -490,7 +486,6 @@
             </div>
         </div>
 
-        <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 رصيد التعدين المباشر</div>
 
@@ -513,7 +508,6 @@
         </div>
     </div>
 
-    <!-- واجهة المتجر وبيع وشراء عملة A -->
     <div id="storeModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
@@ -535,7 +529,6 @@
                 <button id="tabDigitalBtn" class="store-tab-btn" onclick="switchStoreTab('digital')">منتجات رقميه</button>
             </div>
 
-            <!-- القسم الأول: بطاقة هدايا -->
             <div id="panelGifts" class="store-panel active">
                 <div class="store-card">
                     <h4>بطاقة هدايا</h4>
@@ -546,7 +539,6 @@
                 </div>
             </div>
 
-            <!-- القسم الثاني: منتجات رقميه -->
             <div id="panelDigital" class="store-panel">
                 <div class="store-card">
                     <h4>منتجات رقميه</h4>
@@ -557,7 +549,6 @@
                 </div>
             </div>
 
-            <!-- قسم مخصص عند فتح زر بيع وشراء عملة A -->
             <div id="panelTradeDirect" class="store-panel">
                 <div class="store-card">
                     <h4>بيع وشراء عملة A</h4>
@@ -572,7 +563,6 @@
         </div>
     </div>
 
-    <!-- نافذة خدمة العملاء (إرسال إلى بريد الإدارة فقط بدون دردشة) -->
     <div id="supportModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
