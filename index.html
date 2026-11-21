@@ -95,19 +95,24 @@
             transform: translateY(2px);
         }
 
-        /* الزر الوحيد للانتقال إلى المتجر */
+        .main-action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
         .store-nav-btn {
             background-color: var(--yellow);
             color: #000000;
             border: 2px solid var(--yellow);
-            padding: 13px 18px;
+            padding: 12px 16px;
             font-size: 15px;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 12px;
             width: 100%;
             font-weight: 900;
-            box-shadow: 0 0 14px rgba(255, 204, 0, 0.3);
+            box-shadow: 0 0 14px rgba(255, 204, 0, 0.28);
             transition: all 0.15s ease;
         }
 
@@ -117,6 +122,29 @@
         }
 
         .store-nav-btn:active {
+            transform: translateY(2px);
+        }
+
+        .trade-direct-btn {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            padding: 12px 16px;
+            font-size: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.2);
+            transition: all 0.15s ease;
+        }
+
+        .trade-direct-btn:hover {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .trade-direct-btn:active {
             transform: translateY(2px);
         }
 
@@ -216,7 +244,7 @@
             transition: opacity 0.3s ease;
         }
 
-        /* واجهة المتجر المنبثقة المنسقة (أسود وأصفر) */
+        /* واجهة المتجر وبيع وشراء عملة A المنبثقة (أسود وأصفر) */
         .store-modal-overlay {
             display: none;
             position: fixed;
@@ -411,8 +439,11 @@
 
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- الزر الوحيد للانتقال إلى المتجر -->
-        <button class="store-nav-btn" onclick="openStoreModal()">متجر بيع وشراء عملة A</button>
+        <!-- أزرار المتجر وبيع وشراء عملة A -->
+        <div class="main-action-group">
+            <button class="store-nav-btn" onclick="openStoreModal('store')">متجر بيع وشراء عملة A</button>
+            <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
+        </div>
 
         <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
@@ -437,7 +468,7 @@
         </div>
     </div>
 
-    <!-- واجهة المتجر بقسمين فقط: بطاقة هدايا و منتجات رقميه (بدون أسعار) -->
+    <!-- واجهة المتجر وبيع وشراء عملة A -->
     <div id="storeModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
@@ -446,7 +477,7 @@
             </div>
 
             <div class="store-title-box">
-                <h3>متجر بيع وشراء عملة A</h3>
+                <h3 id="modalMainTitle">متجر بيع وشراء عملة A</h3>
                 <p>سيتم فتح المتجر قريباً.</p>
                 <div class="store-player-info">
                     <span>اللاعب: <span id="storePlayerName">لاعب</span> (<span id="storePlayerId">guest</span>)</span>
@@ -476,6 +507,17 @@
                     <h4>منتجات رقميه</h4>
                     <p>سيتم فتح المتجر قريباً.</p>
                     <button class="store-yellow-btn" onclick="triggerSoonNotice('منتجات رقميه')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم مخصص عند فتح زر بيع وشراء عملة A -->
+            <div id="panelTradeDirect" class="store-panel">
+                <div class="store-card">
+                    <h4>بيع وشراء عملة A</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('بيع وشراء عملة A')">
                         سيتم فتح المتجر قريباً
                     </button>
                 </div>
@@ -633,7 +675,7 @@
             window.open('https://t.me/AIL05593889', '_blank');
         }
 
-        function openStoreModal() {
+        function openStoreModal(mode) {
             let userId = "guest";
             let userName = "لاعب";
 
@@ -652,6 +694,25 @@
             document.getElementById("storePlayerName").textContent = userName;
             document.getElementById("storeBalanceVal").textContent = Number(gameCoins).toLocaleString();
             document.getElementById("storeNoticeBox").style.display = "none";
+
+            const tabsEl = document.querySelector(".store-tabs");
+            const panelGifts = document.getElementById("panelGifts");
+            const panelDigital = document.getElementById("panelDigital");
+            const panelTradeDirect = document.getElementById("panelTradeDirect");
+
+            if (mode === "trade") {
+                document.getElementById("modalMainTitle").textContent = "بيع وشراء عملة A";
+                tabsEl.style.display = "none";
+                panelGifts.classList.remove("active");
+                panelDigital.classList.remove("active");
+                panelTradeDirect.classList.add("active");
+            } else {
+                document.getElementById("modalMainTitle").textContent = "متجر بيع وشراء عملة A";
+                tabsEl.style.display = "grid";
+                panelTradeDirect.classList.remove("active");
+                switchStoreTab("gifts");
+            }
+
             document.getElementById("storeModal").classList.add("open");
         }
 
