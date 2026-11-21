@@ -244,7 +244,6 @@
             transition: opacity 0.3s ease;
         }
 
-        /* نوافذ منبثقة (أسود وأصفر) */
         .store-modal-overlay {
             display: none;
             position: fixed;
@@ -449,7 +448,6 @@
 </head>
 <body>
 
-    <!-- رسالة تعدين عملة A المتحركة -->
     <div id="miningAlert">⛏️ تم تعدين عملة A بنجاح!</div>
 
     <div class="game-container">
@@ -464,13 +462,11 @@
 
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
-        <!-- أزرار الصفحة الأولى -->
         <div class="main-action-group">
             <button class="store-nav-btn" onclick="openStoreModal('store')">متجر عملة A</button>
             <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
         </div>
 
-        <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 رصيد التعدين المباشر</div>
 
@@ -493,7 +489,6 @@
         </div>
     </div>
 
-    <!-- واجهة المتجر وبيع وشراء عملة A -->
     <div id="storeModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
@@ -515,7 +510,6 @@
                 <button id="tabDigitalBtn" class="store-tab-btn" onclick="switchStoreTab('digital')">منتجات رقميه</button>
             </div>
 
-            <!-- القسم الأول: بطاقة هدايا -->
             <div id="panelGifts" class="store-panel active">
                 <div class="store-card">
                     <h4>بطاقة هدايا</h4>
@@ -526,7 +520,6 @@
                 </div>
             </div>
 
-            <!-- القسم الثاني: منتجات رقميه -->
             <div id="panelDigital" class="store-panel">
                 <div class="store-card">
                     <h4>منتجات رقميه</h4>
@@ -537,7 +530,6 @@
                 </div>
             </div>
 
-            <!-- قسم مخصص عند فتح زر بيع وشراء عملة A -->
             <div id="panelTradeDirect" class="store-panel">
                 <div class="store-card">
                     <h4>بيع وشراء عملة A</h4>
@@ -552,7 +544,6 @@
         </div>
     </div>
 
-    <!-- نافذة خدمة العملاء (إرسال إلى بريد الإدارة فقط بدون دردشة) -->
     <div id="supportModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
@@ -583,10 +574,12 @@
     </div>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+        } catch (e) {}
 
         const SUPPORT_EMAIL = "flm330517@gmail.com";
         const SUPPORT_EMAIL_ENDPOINT = `https://formsubmit.co/ajax/${SUPPORT_EMAIL}`;
@@ -594,20 +587,35 @@
         const DAILY_CAP = 1000;
         const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
 
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+        function safeGetItem(key, fallback) {
+            try {
+                const val = localStorage.getItem(key);
+                return val !== null ? val : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
 
-        let score = parseInt(localStorage.getItem('pe_score')) || 0;
-        let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
+        function safeSetItem(key, val) {
+            try {
+                localStorage.setItem(key, String(val));
+            } catch (e) {}
+        }
+
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+
+        let score = parseInt(safeGetItem('pe_score', '0'), 10) || 0;
+        let gameCoins = parseInt(safeGetItem('pe_coins', '0'), 10) || 0;
         let isGameOver = false;
 
         let dailyState = loadDailyState();
 
         function loadDailyState() {
             const now = Date.now();
-            const savedMined = parseInt(localStorage.getItem('pe_daily_mined')) || 0;
-            const savedWindowStart = parseInt(localStorage.getItem('pe_daily_window_start')) || now;
-            const savedLastTick = parseInt(localStorage.getItem('pe_last_tick_time')) || now;
+            const savedMined = parseInt(safeGetItem('pe_daily_mined', '0'), 10) || 0;
+            const savedWindowStart = parseInt(safeGetItem('pe_daily_window_start', String(now)), 10) || now;
+            const savedLastTick = parseInt(safeGetItem('pe_last_tick_time', String(now)), 10) || now;
 
             let state = {
                 minedToday: savedMined,
@@ -631,9 +639,9 @@
         }
 
         function saveDailyState(state) {
-            localStorage.setItem('pe_daily_mined', String(state.minedToday));
-            localStorage.setItem('pe_daily_window_start', String(state.windowStart));
-            localStorage.setItem('pe_last_tick_time', String(state.lastTick));
+            safeSetItem('pe_daily_mined', state.minedToday);
+            safeSetItem('pe_daily_window_start', state.windowStart);
+            safeSetItem('pe_last_tick_time', state.lastTick);
         }
 
         function refreshDailyWindowIfNeeded() {
@@ -712,11 +720,15 @@
 
         function copyGameLink() {
             const gameUrl = window.location.href || "https://jump-game-9pbu.vercel.app";
-            navigator.clipboard.writeText(gameUrl).then(() => {
-                alert("📋 تم نسخ رابط اللعبة بنجاح!");
-            }).catch(() => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(gameUrl).then(() => {
+                    alert("📋 تم نسخ رابط اللعبة بنجاح!");
+                }).catch(() => {
+                    prompt("انسخ الرابط من هنا:", gameUrl);
+                });
+            } else {
                 prompt("انسخ الرابط من هنا:", gameUrl);
-            });
+            }
         }
 
         function showCustomAlert(messageText) {
@@ -733,16 +745,18 @@
             let userId = "guest";
             let userName = "لاعب";
 
-            if (
-                window.Telegram &&
-                window.Telegram.WebApp &&
-                window.Telegram.WebApp.initDataUnsafe &&
-                window.Telegram.WebApp.initDataUnsafe.user
-            ) {
-                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-                userId = tgUser.id || "guest";
-                userName = tgUser.first_name || tgUser.username || "لاعب";
-            }
+            try {
+                if (
+                    window.Telegram &&
+                    window.Telegram.WebApp &&
+                    window.Telegram.WebApp.initDataUnsafe &&
+                    window.Telegram.WebApp.initDataUnsafe.user
+                ) {
+                    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                    userId = tgUser.id || "guest";
+                    userName = tgUser.first_name || tgUser.username || "لاعب";
+                }
+            } catch (e) {}
 
             return { userId, userName };
         }
@@ -876,13 +890,13 @@
             document.getElementById("gameCoins").innerText = gameCoins;
             document.getElementById("dailyCapText").innerText =
                 `التجميع اليومي (24 ساعة): ${Number(dailyState.minedToday).toLocaleString()} / ${DAILY_CAP.toLocaleString()} A`;
-            localStorage.setItem('pe_score', score);
-            localStorage.setItem('pe_coins', gameCoins);
+            safeSetItem('pe_score', score);
+            safeSetItem('pe_coins', gameCoins);
         }
 
         function update() {
             refreshDailyWindowIfNeeded();
-            if (isGameOver) return;
+            if (isGameOver || !canvas) return;
 
             amir.dy += amir.gravity;
             amir.y += amir.dy;
@@ -922,6 +936,7 @@
         }
 
         function draw() {
+            if (!ctx || !canvas) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = "#87CEEB";
