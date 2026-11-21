@@ -130,4 +130,867 @@
             color: var(--yellow);
             border: 2px solid var(--yellow);
             padding: 12px 16px;
-            font-
+            font-size: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.2);
+            transition: all 0.15s ease;
+        }
+
+        .trade-direct-btn:hover {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .trade-direct-btn:active {
+            transform: translateY(2px);
+        }
+
+        .ton-wallet-box {
+            background: #000000;
+            border: 2px solid var(--yellow);
+            border-radius: 12px;
+            margin-top: 12px;
+            padding: 12px;
+            text-align: right;
+            color: var(--yellow);
+        }
+
+        .wallet-header {
+            font-size: 14px;
+            color: var(--yellow);
+            font-weight: 900;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .wallet-balance {
+            font-size: 14px;
+            color: var(--yellow-soft);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: ltr;
+        }
+
+        .wallet-balance span {
+            text-align: right;
+        }
+
+        .wallet-total {
+            font-size: 13px;
+            color: var(--yellow);
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-top: 1px dashed var(--yellow);
+            padding-top: 8px;
+            text-align: center;
+        }
+
+        .wallet-btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .action-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 1.5px solid var(--yellow);
+            padding: 8px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            flex: 1;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .disabled-withdraw-btn {
+            background-color: #000000;
+            color: var(--yellow-soft);
+            border: 1.5px dashed var(--yellow);
+            padding: 8px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: not-allowed;
+            font-weight: 800;
+            flex: 1;
+        }
+
+        #miningAlert {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--yellow);
+            color: #000000;
+            border: 2px solid #000000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.35);
+            z-index: 2000;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* نوافذ منبثقة (أسود وأصفر) */
+        .store-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.94);
+            z-index: 1500;
+            overflow-y: auto;
+            padding: 16px 12px 32px;
+            text-align: right;
+        }
+
+        .store-modal-overlay.open {
+            display: block;
+        }
+
+        .store-sheet {
+            max-width: 520px;
+            margin: 0 auto;
+            background-color: var(--card-black);
+            border: 2px solid var(--yellow);
+            border-radius: 16px;
+            padding: 16px;
+            color: var(--yellow);
+            box-shadow: 0 0 22px rgba(255, 204, 0, 0.22);
+        }
+
+        .store-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-back-game {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .btn-back-game:hover {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .store-status-pill {
+            border: 1.5px solid var(--yellow);
+            background-color: var(--yellow-dim);
+            color: var(--yellow);
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .store-title-box {
+            border: 2px solid var(--yellow);
+            border-radius: 14px;
+            padding: 14px;
+            background-color: #000000;
+            margin-bottom: 14px;
+        }
+
+        .store-title-box h3 {
+            margin: 0 0 6px;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-title-box p {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: var(--yellow-soft);
+            font-weight: 700;
+        }
+
+        .store-player-info {
+            border-top: 1px dashed var(--yellow);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .store-tab-btn {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .store-tab-btn.active {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .store-panel {
+            display: none;
+        }
+
+        .store-panel.active {
+            display: block;
+        }
+
+        .store-card {
+            border: 2px solid var(--yellow);
+            border-radius: 12px;
+            padding: 14px;
+            background-color: #000000;
+            margin-bottom: 12px;
+        }
+
+        .store-card h4 {
+            margin: 0 0 6px;
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
+        .store-card p {
+            margin: 0 0 12px;
+            font-size: 13px;
+            color: var(--yellow-soft);
+        }
+
+        .store-textarea {
+            width: 100%;
+            min-height: 95px;
+            background-color: #0a0a0a;
+            color: var(--yellow);
+            border: 1.5px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-family: Tahoma, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            outline: none;
+            resize: vertical;
+        }
+
+        .store-textarea::placeholder {
+            color: rgba(255, 204, 0, 0.55);
+        }
+
+        .store-yellow-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px 14px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .store-yellow-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .store-yellow-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .store-notice {
+            display: none;
+            margin-top: 12px;
+            border: 2px solid var(--yellow);
+            background-color: var(--yellow-dim);
+            color: var(--yellow);
+            border-radius: 10px;
+            padding: 11px 12px;
+            font-size: 13px;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- رسالة تعدين عملة A المتحركة -->
+    <div id="miningAlert">⛏️ تم تعدين عملة A بنجاح!</div>
+
+    <div class="game-container">
+        <h2>⛏️ منصة تعدين عملة A</h2>
+        <div class="score-board">النقاط: <span id="score">0</span></div>
+
+        <canvas id="gameCanvas" width="350" height="170"></canvas>
+
+        <div class="daily-cap-box" id="dailyCapText">
+            التجميع اليومي (24 ساعة): 0 / 1,000 A
+        </div>
+
+        <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
+
+        <!-- أزرار الصفحة الأولى -->
+        <div class="main-action-group">
+            <button class="store-nav-btn" onclick="openStoreModal('store')">متجر عملة A</button>
+            <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
+        </div>
+
+        <!-- لوحة تعدين وحساب اللاعب -->
+        <div class="ton-wallet-box">
+            <div class="wallet-header">💎 رصيد التعدين المباشر</div>
+
+            <div class="wallet-balance" style="justify-content: center; font-size: 15px;">
+                <span>إجمالي عملات A المعدنة: <span id="gameCoins" style="color: #ffcc00; font-weight: 900;">0</span> A</span>
+            </div>
+
+            <div class="wallet-total">
+                🚀 الحد الأقصى للتجميع: 1,000 عملة A كل 24 ساعة
+            </div>
+
+            <div class="wallet-btn-group">
+                <button class="disabled-withdraw-btn" onclick="alert('السحب قريباً')">🔒 السحب قريباً</button>
+            </div>
+
+            <div class="wallet-btn-group">
+                <button class="action-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
+                <button class="action-btn" onclick="openSupportModal()">🎧 الدعم الفني</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- واجهة المتجر وبيع وشراء عملة A -->
+    <div id="storeModal" class="store-modal-overlay">
+        <div class="store-sheet">
+            <div class="store-top-bar">
+                <button class="btn-back-game" onclick="closeStoreModal()">← العودة إلى اللعبة</button>
+                <span class="store-status-pill">سيتم فتح المتجر قريباً</span>
+            </div>
+
+            <div class="store-title-box">
+                <h3 id="modalMainTitle">متجر عملة A</h3>
+                <p>سيتم فتح المتجر قريباً.</p>
+                <div class="store-player-info">
+                    <span>اللاعب: <span id="storePlayerName">لاعب</span> (<span id="storePlayerId">guest</span>)</span>
+                    <span>رصيدك: <span id="storeBalanceVal">0</span> A</span>
+                </div>
+            </div>
+
+            <div class="store-tabs">
+                <button id="tabGiftsBtn" class="store-tab-btn active" onclick="switchStoreTab('gifts')">بطاقة هدايا</button>
+                <button id="tabDigitalBtn" class="store-tab-btn" onclick="switchStoreTab('digital')">منتجات رقميه</button>
+            </div>
+
+            <!-- القسم الأول: بطاقة هدايا -->
+            <div id="panelGifts" class="store-panel active">
+                <div class="store-card">
+                    <h4>بطاقة هدايا</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('بطاقة هدايا')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+            </div>
+
+            <!-- القسم الثاني: منتجات رقميه -->
+            <div id="panelDigital" class="store-panel">
+                <div class="store-card">
+                    <h4>منتجات رقميه</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('منتجات رقميه')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+            </div>
+
+            <!-- قسم مخصص عند فتح زر بيع وشراء عملة A -->
+            <div id="panelTradeDirect" class="store-panel">
+                <div class="store-card">
+                    <h4>بيع وشراء عملة A</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('بيع وشراء عملة A')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+            </div>
+
+            <div id="storeNoticeBox" class="store-notice"></div>
+        </div>
+    </div>
+
+    <!-- نافذة خدمة العملاء (إرسال إلى بريد الإدارة فقط بدون دردشة) -->
+    <div id="supportModal" class="store-modal-overlay">
+        <div class="store-sheet">
+            <div class="store-top-bar">
+                <button class="btn-back-game" onclick="closeSupportModal()">← العودة إلى اللعبة</button>
+                <span class="store-status-pill">إرسال إلى البريد فقط</span>
+            </div>
+
+            <div class="store-title-box">
+                <h3>🎧 خدمة العملاء</h3>
+                <p>يتم إرسال رسالتك إلى البريد الإلكتروني للإدارة فقط دون فتح محادثة.</p>
+                <div class="store-player-info">
+                    <span>اللاعب: <span id="supportPlayerName">لاعب</span> (<span id="supportPlayerId">guest</span>)</span>
+                    <span>رصيدك: <span id="supportBalanceVal">0</span> A</span>
+                </div>
+            </div>
+
+            <div class="store-card">
+                <h4>اكتب رسالتك للإدارة</h4>
+                <p>سيتم إرفاق بياناتك ورصيدك للمراجعة عبر البريد الإلكتروني.</p>
+                <textarea id="supportMessageInput" class="store-textarea" placeholder="اكتب استفسارك أو ملاحظتك هنا..."></textarea>
+                <button id="sendSupportBtn" class="store-yellow-btn" onclick="submitSupportEmail()">
+                    إرسال إلى البريد الإلكتروني
+                </button>
+            </div>
+
+            <div id="supportNoticeBox" class="store-notice"></div>
+        </div>
+    </div>
+
+    <script>
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+
+        const SUPPORT_EMAIL = "flm330517@gmail.com";
+        const SUPPORT_EMAIL_ENDPOINT = `https://formsubmit.co/ajax/${SUPPORT_EMAIL}`;
+
+        const DAILY_CAP = 1000;
+        const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
+
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let score = parseInt(localStorage.getItem('pe_score')) || 0;
+        let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
+        let isGameOver = false;
+
+        let dailyState = loadDailyState();
+
+        function loadDailyState() {
+            const now = Date.now();
+            const savedMined = parseInt(localStorage.getItem('pe_daily_mined')) || 0;
+            const savedWindowStart = parseInt(localStorage.getItem('pe_daily_window_start')) || now;
+            const savedLastTick = parseInt(localStorage.getItem('pe_last_tick_time')) || now;
+
+            let state = {
+                minedToday: savedMined,
+                windowStart: savedWindowStart,
+                lastTick: savedLastTick,
+                clockTamperDetected: false
+            };
+
+            if (now < state.lastTick - 5000) {
+                state.clockTamperDetected = true;
+            }
+
+            if (!state.clockTamperDetected && (now - state.windowStart >= WINDOW_24H_MS)) {
+                state.minedToday = 0;
+                state.windowStart = now;
+            }
+
+            state.lastTick = Math.max(now, state.lastTick);
+            saveDailyState(state);
+            return state;
+        }
+
+        function saveDailyState(state) {
+            localStorage.setItem('pe_daily_mined', String(state.minedToday));
+            localStorage.setItem('pe_daily_window_start', String(state.windowStart));
+            localStorage.setItem('pe_last_tick_time', String(state.lastTick));
+        }
+
+        function refreshDailyWindowIfNeeded() {
+            const now = Date.now();
+            if (now < dailyState.lastTick - 5000) {
+                dailyState.clockTamperDetected = true;
+            }
+            if (!dailyState.clockTamperDetected && (now - dailyState.windowStart >= WINDOW_24H_MS)) {
+                dailyState.minedToday = 0;
+                dailyState.windowStart = now;
+            }
+            if (now > dailyState.lastTick) {
+                dailyState.lastTick = now;
+            }
+            saveDailyState(dailyState);
+        }
+
+        function mineACoins(requestedAmount) {
+            refreshDailyWindowIfNeeded();
+
+            if (dailyState.clockTamperDetected) {
+                showCustomAlert("⚠️ تم رصد فارق زمني غير طبيعي؛ التجميع مقيّد حالياً.");
+                updateBalances();
+                return 0;
+            }
+
+            const remaining = Math.max(0, DAILY_CAP - dailyState.minedToday);
+            if (remaining <= 0) {
+                showCustomAlert("⏳ وصلت للحد اليومي (1,000 عملة A خلال 24 ساعة).");
+                updateBalances();
+                return 0;
+            }
+
+            const granted = Math.min(requestedAmount, remaining);
+            gameCoins += granted;
+            dailyState.minedToday += granted;
+            saveDailyState(dailyState);
+            updateBalances();
+            showCustomAlert(`⛏️ تم تعدين +${granted} عملة A بنجاح!`);
+            return granted;
+        }
+
+        let amir = {
+            x: 40,
+            y: 95,
+            width: 30,
+            height: 35,
+            dy: 0,
+            jumpPower: -10,
+            gravity: 0.55,
+            grounded: true
+        };
+
+        const carTypes = ["🚙", "🚗", "🚕", "🚐"];
+
+        let obstacle = {
+            x: 350,
+            y: 100,
+            width: 30,
+            height: 30,
+            speed: 2.0,
+            currentCar: "🚙"
+        };
+
+        let buildings = [
+            { x: 0, width: 60, height: 75, color: "#7f8c8d" },
+            { x: 70, width: 70, height: 95, color: "#95a5a6" },
+            { x: 150, width: 65, height: 85, color: "#BDC3C7" },
+            { x: 225, width: 75, height: 105, color: "#65737e" },
+            { x: 310, width: 60, height: 80, color: "#546e7a" }
+        ];
+
+        function getRandomCar() {
+            return carTypes[Math.floor(Math.random() * carTypes.length)];
+        }
+
+        function copyGameLink() {
+            const gameUrl = window.location.href || "https://jump-game-9pbu.vercel.app";
+            navigator.clipboard.writeText(gameUrl).then(() => {
+                alert("📋 تم نسخ رابط اللعبة بنجاح!");
+            }).catch(() => {
+                prompt("انسخ الرابط من هنا:", gameUrl);
+            });
+        }
+
+        function showCustomAlert(messageText) {
+            const alertBox = document.getElementById("miningAlert");
+            alertBox.textContent = messageText;
+            alertBox.style.display = "block";
+            clearTimeout(window._alertTimer);
+            window._alertTimer = setTimeout(() => {
+                alertBox.style.display = "none";
+            }, 1600);
+        }
+
+        function getPlayerIdentity() {
+            let userId = "guest";
+            let userName = "لاعب";
+
+            if (
+                window.Telegram &&
+                window.Telegram.WebApp &&
+                window.Telegram.WebApp.initDataUnsafe &&
+                window.Telegram.WebApp.initDataUnsafe.user
+            ) {
+                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                userId = tgUser.id || "guest";
+                userName = tgUser.first_name || tgUser.username || "لاعب";
+            }
+
+            return { userId, userName };
+        }
+
+        function openSupportModal() {
+            const { userId, userName } = getPlayerIdentity();
+            document.getElementById("supportPlayerId").textContent = userId;
+            document.getElementById("supportPlayerName").textContent = userName;
+            document.getElementById("supportBalanceVal").textContent = Number(gameCoins).toLocaleString();
+            document.getElementById("supportNoticeBox").style.display = "none";
+            document.getElementById("supportModal").classList.add("open");
+        }
+
+        function closeSupportModal() {
+            document.getElementById("supportModal").classList.remove("open");
+        }
+
+        function showSupportNotice(text) {
+            const box = document.getElementById("supportNoticeBox");
+            box.textContent = text;
+            box.style.display = "block";
+        }
+
+        async function submitSupportEmail() {
+            const textarea = document.getElementById("supportMessageInput");
+            const sendBtn = document.getElementById("sendSupportBtn");
+            const msg = textarea.value.trim();
+
+            if (!msg) {
+                showSupportNotice("⚠️ يرجى كتابة رسالتك قبل الإرسال.");
+                return;
+            }
+
+            const { userId, userName } = getPlayerIdentity();
+            sendBtn.disabled = true;
+            sendBtn.textContent = "جاري الإرسال...";
+
+            try {
+                const response = await fetch(SUPPORT_EMAIL_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: `خدمة عملاء - عملة A (${userName} | ${userId})`,
+                        _template: "table",
+                        section: "خدمة العملاء",
+                        player_name: userName,
+                        player_id: String(userId),
+                        balance_a: gameCoins,
+                        daily_mined_a: dailyState.minedToday,
+                        message: msg,
+                        sent_at: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                textarea.value = "";
+                showSupportNotice("✅ تم إرسال رسالتك إلى البريد الإلكتروني للإدارة بنجاح.");
+            } catch (err) {
+                showSupportNotice("⚠️ تعذر الإرسال حالياً؛ يرجى التحقق من تفعيل البريد أو المحاولة مرة أخرى.");
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = "إرسال إلى البريد الإلكتروني";
+            }
+        }
+
+        function openStoreModal(mode) {
+            const { userId, userName } = getPlayerIdentity();
+
+            document.getElementById("storePlayerId").textContent = userId;
+            document.getElementById("storePlayerName").textContent = userName;
+            document.getElementById("storeBalanceVal").textContent = Number(gameCoins).toLocaleString();
+            document.getElementById("storeNoticeBox").style.display = "none";
+
+            const tabsEl = document.querySelector(".store-tabs");
+            const panelGifts = document.getElementById("panelGifts");
+            const panelDigital = document.getElementById("panelDigital");
+            const panelTradeDirect = document.getElementById("panelTradeDirect");
+
+            if (mode === "trade") {
+                document.getElementById("modalMainTitle").textContent = "بيع وشراء عملة A";
+                tabsEl.style.display = "none";
+                panelGifts.classList.remove("active");
+                panelDigital.classList.remove("active");
+                panelTradeDirect.classList.add("active");
+            } else {
+                document.getElementById("modalMainTitle").textContent = "متجر عملة A";
+                tabsEl.style.display = "grid";
+                panelTradeDirect.classList.remove("active");
+                switchStoreTab("gifts");
+            }
+
+            document.getElementById("storeModal").classList.add("open");
+        }
+
+        function closeStoreModal() {
+            document.getElementById("storeModal").classList.remove("open");
+        }
+
+        function switchStoreTab(tabName) {
+            const isGifts = tabName === "gifts";
+            document.getElementById("tabGiftsBtn").classList.toggle("active", isGifts);
+            document.getElementById("tabDigitalBtn").classList.toggle("active", !isGifts);
+            document.getElementById("panelGifts").classList.toggle("active", isGifts);
+            document.getElementById("panelDigital").classList.toggle("active", !isGifts);
+            document.getElementById("storeNoticeBox").style.display = "none";
+        }
+
+        function triggerSoonNotice(sectionTitle) {
+            const box = document.getElementById("storeNoticeBox");
+            box.textContent = `سيتم فتح المتجر قريباً (${sectionTitle}).`;
+            box.style.display = "block";
+        }
+
+        function makeJump() {
+            if (amir.grounded && !isGameOver) {
+                amir.dy = amir.jumpPower;
+                amir.grounded = false;
+                mineACoins(1);
+            } else if (isGameOver) {
+                resetGame();
+            }
+        }
+
+        function updateBalances() {
+            document.getElementById("gameCoins").innerText = gameCoins;
+            document.getElementById("dailyCapText").innerText =
+                `التجميع اليومي (24 ساعة): ${Number(dailyState.minedToday).toLocaleString()} / ${DAILY_CAP.toLocaleString()} A`;
+            localStorage.setItem('pe_score', score);
+            localStorage.setItem('pe_coins', gameCoins);
+        }
+
+        function update() {
+            refreshDailyWindowIfNeeded();
+            if (isGameOver) return;
+
+            amir.dy += amir.gravity;
+            amir.y += amir.dy;
+
+            if (amir.y > 95) {
+                amir.y = 95;
+                amir.dy = 0;
+                amir.grounded = true;
+            }
+
+            buildings.forEach(b => {
+                b.x -= 0.3;
+                if (b.x + b.width < 0) {
+                    b.x = canvas.width;
+                }
+            });
+
+            obstacle.x -= obstacle.speed;
+            if (obstacle.x < -30) {
+                obstacle.x = 350;
+                obstacle.currentCar = getRandomCar();
+                score += 10;
+                mineACoins(2);
+            }
+
+            let amirBox = { x: amir.x + 6, y: amir.y + 6, width: amir.width - 12, height: amir.height - 8 };
+            let carBox = { x: obstacle.x + 4, y: obstacle.y + 6, width: obstacle.width - 8, height: obstacle.height - 6 };
+
+            if (
+                amirBox.x < carBox.x + carBox.width &&
+                amirBox.x + amirBox.width > carBox.x &&
+                amirBox.y < carBox.y + carBox.height &&
+                amirBox.y + amirBox.height > carBox.y
+            ) {
+                isGameOver = true;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#87CEEB";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            buildings.forEach(b => {
+                ctx.fillStyle = b.color;
+                ctx.fillRect(b.x, 130 - b.height, b.width, b.height);
+
+                ctx.fillStyle = "rgba(255,255,255,0.6)";
+                for (let wx = b.x + 8; wx < b.x + b.width - 8; wx += 12) {
+                    for (let wy = 130 - b.height + 10; wy < 120; wy += 15) {
+                        ctx.fillRect(wx, wy, 4, 7);
+                    }
+                }
+            });
+
+            ctx.fillStyle = "#34495e";
+            ctx.fillRect(0, 130, canvas.width, 40);
+
+            ctx.fillStyle = "#f1c40f";
+            for (let i = 0; i < canvas.width; i += 30) {
+                ctx.fillRect(i - (score * 2) % 30, 148, 15, 3);
+            }
+
+            ctx.save();
+            ctx.translate(amir.x + amir.width / 2, amir.y + amir.height / 2);
+            ctx.scale(-1, 1);
+            ctx.font = "26px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("🏃‍♂️", 0, 2);
+            ctx.restore();
+
+            ctx.font = "24px Arial";
+            ctx.fillText(obstacle.currentCar, obstacle.x, obstacle.y + 22);
+
+            if (isGameOver) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#ffcc00";
+                ctx.font = "18px Tahoma";
+                ctx.textAlign = "center";
+                ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
+
+                ctx.font = "13px Tahoma";
+                ctx.fillText("اضغط للبدء والتعدين من جديد", canvas.width / 2, 95);
+            }
+
+            document.getElementById("score").innerText = score;
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        function resetGame() {
+            score = 0;
+            obstacle.x = 350;
+            obstacle.speed = 2.0;
+            obstacle.currentCar = getRandomCar();
+            isGameOver = false;
+        }
+
+        updateBalances();
+        loop();
+    </script>
+</body>
+</html>
