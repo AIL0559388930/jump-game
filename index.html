@@ -1,1 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعدين عملة A - مغامرة اللاعب</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-black: #000000;
+            --card-black: #0a0a0a;
+            --yellow: #ffcc00;
+            --yellow-soft: #ffe066;
+            --yellow-dim: rgba(255, 204, 0, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: var(--bg-black);
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            color: var(--yellow);
+        }
+
+        .game-container {
+            background: var(--card-black);
+            border: 2px solid var(--yellow);
+            max-width: 420px;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 0 18px rgba(255, 204, 0, 0.16);
+        }
+
+        .game-container h2 {
+            color: var(--yellow);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        canvas {
+            background: #87CEEB;
+            border: 2px solid var(--yellow);
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        .score-board {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--yellow);
+        }
+
+        .daily-cap-box {
+            border: 1.5px solid var(--yellow);
+            background-color: #000000;
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--yellow-soft);
+        }
+
+        .jump-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.25);
+            transition: all 0.15s ease;
+        }
+
+        .jump-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .jump-btn:active {
+            transform: translateY(2px);
+        }
+
+        .main-action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .store-nav-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 2px solid var(--yellow);
+            padding: 12px 16px;
+            font-size: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 14px rgba(255, 204, 0, 0.28);
+            transition: all 0.15s ease;
+        }
+
+        .store-nav-btn:hover {
+            background-color: #000000;
+            color: var(--yellow);
+        }
+
+        .store-nav-btn:active {
+            transform: translateY(2px);
+        }
+
+        .trade-direct-btn {
+            background-color: #000000;
+            color: var(--yellow);
+            border: 2px solid var(--yellow);
+            padding: 12px 16px;
+            font-size: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 900;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.2);
+            transition: all 0.15s ease;
+        }
+
+        .trade-direct-btn:hover {
+            background-color: var(--yellow);
+            color: #000000;
+        }
+
+        .trade-direct-btn:active {
+            transform: translateY(2px);
+        }
+
+        .ton-wallet-box {
+            background: #000000;
+            border: 2px solid var(--yellow);
+            border-radius: 12px;
+            margin-top: 12px;
+            padding: 12px;
+            text-align: right;
+            color: var(--yellow);
+        }
+
+        .wallet-header {
+            font-size: 14px;
+            color: var(--yellow);
+            font-weight: 900;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .wallet-balance {
+            font-size: 14px;
+            color: var(--yellow-soft);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: ltr;
+        }
+
+        .wallet-balance span {
+            text-align: right;
+        }
+
+        .wallet-total {
+            font-size: 13px;
+            color: var(--yellow);
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-top: 1px dashed var(--yellow);
+            padding-top: 8px;
+            text-align: center;
+        }
+
+        .wallet-btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .action-btn {
+            background-color: var(--yellow);
+            color: #000000;
+            border: 1.5px solid var(--yellow);
+            padding: 8px
  
