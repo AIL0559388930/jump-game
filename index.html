@@ -486,7 +486,7 @@
                 الحد الأسبوعي: <strong id="referralCountText">0 / 10</strong> لاعبين أسبوعياً
             </div>
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الإحالة</button>
+                <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الدعوة</button>
             </div>
         </div>
 
@@ -614,7 +614,6 @@
         const DAILY_CAP = 1000;
         const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
 
-        const REFERRAL_REWARD = 1000;
         const WEEKLY_REFERRAL_CAP = 10;
         const WINDOW_7D_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -790,12 +789,12 @@
             const botInviteUrl = "https://t.me/PlayToEarn2026_bot";
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(botInviteUrl).then(() => {
-                    alert("📋 تم نسخ رابط الإحالة بنجاح!");
+                    alert("📋 تم نسخ رابط الدعوة بنجاح!");
                 }).catch(() => {
-                    prompt("انسخ رابط الإحالة من هنا:", botInviteUrl);
+                    prompt("انسخ رابط الدعوة من هنا:", botInviteUrl);
                 });
             } else {
-                prompt("انسخ رابط الإحالة من هنا:", botInviteUrl);
+                prompt("انسخ رابط الدعوة من هنا:", botInviteUrl);
             }
         }
 
