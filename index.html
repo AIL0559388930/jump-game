@@ -668,10 +668,6 @@
         const SUPPORT_EMAIL = "Kma509093@gmail.com";
         const SUPPORT_EMAIL_ENDPOINT = `https://formsubmit.co/ajax/${SUPPORT_EMAIL}`;
 
-        // إعدادات قاعدة البيانات المشتركة (Supabase) للعدّاد العام
-        const SUPABASE_URL = "https://YOUR_SUPABASE_URL.supabase.co";
-        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-
         const DAILY_CAP = 1000;
         const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
 
@@ -685,117 +681,73 @@
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
         let isGameOver = false;
 
-        let globalStats = {
-            totalPlayers: parseInt(localStorage.getItem('pe_global_players')) || 0,
-            totalMined: parseInt(localStorage.getItem('pe_global_mined')) || 0
-        };
+        let totalGlobalPlayers = parseInt(localStorage.getItem('pe_global_players')) || 0;
+        let totalGlobalMined = parseInt(localStorage.getItem('pe_global_mined')) || 0;
 
         let dailyState = loadDailyState();
         let referralState = loadReferralState();
 
-        function isSupabaseConfigured() {
-            return (
-                SUPABASE_URL &&
-                SUPABASE_ANON_KEY &&
-                !SUPABASE_URL.includes("YOUR_SUPABASE_URL") &&
-                !SUPABASE_ANON_KEY.includes("YOUR_SUPABASE_ANON_KEY")
-            );
-        }
-
-        function renderGlobalStats() {
-            localStorage.setItem('pe_global_players', String(globalStats.totalPlayers));
-            localStorage.setItem('pe_global_mined', String(globalStats.totalMined));
+        function renderGlobalCounterUI() {
+            localStorage.setItem('pe_global_players', String(totalGlobalPlayers));
+            localStorage.setItem('pe_global_mined', String(totalGlobalMined));
 
             const playersEl = document.getElementById("globalPlayersCount");
             const minedEl = document.getElementById("globalTotalMined");
 
             if (playersEl) {
-                playersEl.innerText = Number(globalStats.totalPlayers || 0).toLocaleString();
+                playersEl.innerText = Number(totalGlobalPlayers || 0).toLocaleString();
             }
             if (minedEl) {
-                minedEl.innerText = Number(globalStats.totalMined || 0).toLocaleString() + " A";
+                minedEl.innerText = Number(totalGlobalMined || 0).toLocaleString() + " A";
             }
         }
 
-        function applyServerGlobalStats(data) {
-            if (!data) return;
-            const row = Array.isArray(data) ? data[0] : data;
-            if (!row) return;
+        function getPlayerIdentity() {
+            let userId = "guest";
+            let userName = "لاعب";
 
-            if (typeof row.total_players !== "undefined") {
-                globalStats.totalPlayers = Number(row.total_players) || 0;
+            if (
+                window.Telegram &&
+                window.Telegram.WebApp &&
+                window.Telegram.WebApp.initDataUnsafe &&
+                window.Telegram.WebApp.initDataUnsafe.user
+            ) {
+                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                userId = tgUser.id || "guest";
+                userName = tgUser.first_name || tgUser.username || "لاعب";
             }
-            if (typeof row.total_mined !== "undefined") {
-                globalStats.totalMined = Number(row.total_mined) || 0;
-            }
-            renderGlobalStats();
+
+            return { userId, userName };
         }
 
-        async function callGlobalRpc(fnName, payload = {}) {
-            if (!isSupabaseConfigured()) return null;
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fnName}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "apikey": SUPABASE_ANON_KEY,
-                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-                },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) {
-                throw new Error(`Supabase RPC failed (${fnName}): ${res.status}`);
-            }
-            return await res.json();
-        }
-
-        function getUniquePlayerId() {
+        function getUniquePlayerKey() {
             const { userId } = getPlayerIdentity();
             if (userId && String(userId) !== "guest") {
                 return "tg_" + String(userId);
             }
-            let fallbackId = localStorage.getItem("pe_unique_guest_id");
-            if (!fallbackId) {
-                fallbackId = "guest_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 8);
-                localStorage.setItem("pe_unique_guest_id", fallbackId);
+            let guestKey = localStorage.getItem("pe_guest_unique_key");
+            if (!guestKey) {
+                guestKey = "guest_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 7);
+                localStorage.setItem("pe_guest_unique_key", guestKey);
             }
-            return fallbackId;
+            return guestKey;
         }
 
-        async function initGlobalCounter() {
-            const uniqueId = getUniquePlayerId();
-            const alreadyCountedLocally = localStorage.getItem("pe_counted_player_" + uniqueId) === "1";
-
-            if (!alreadyCountedLocally) {
-                globalStats.totalPlayers += 1;
-                localStorage.setItem("pe_counted_player_" + uniqueId, "1");
+        function registerUniquePlayerOnce() {
+            const key = getUniquePlayerKey();
+            const flagName = "pe_seen_player_" + key;
+            if (!localStorage.getItem(flagName)) {
+                totalGlobalPlayers += 1;
+                localStorage.setItem(flagName, "1");
             }
-            renderGlobalStats();
-
-            if (!isSupabaseConfigured()) return;
-
-            try {
-                const rpcData = await callGlobalRpc("register_player", { p_id: uniqueId });
-                applyServerGlobalStats(rpcData);
-            } catch (err) {
-                console.error("تعذر مزامنة تسجيل اللاعب مع السيرفر:", err);
-            }
+            renderGlobalCounterUI();
         }
 
-        async function addGlobalMined(amount) {
+        function addToGlobalProduction(amount) {
             const gained = Number(amount || 0);
             if (gained <= 0) return;
-
-            globalStats.totalMined += gained;
-            renderGlobalStats();
-
-            if (!isSupabaseConfigured()) return;
-
-            try {
-                const rpcData = await callGlobalRpc("add_mined_coins", { amount: gained });
-                applyServerGlobalStats(rpcData);
-            } catch (err) {
-                console.error("تعذر مزامنة الإنتاج العام مع السيرفر:", err);
-            }
+            totalGlobalMined += gained;
+            renderGlobalCounterUI();
         }
 
         function loadDailyState() {
@@ -918,7 +870,7 @@
             dailyState.minedToday += granted;
             saveDailyState(dailyState);
             updateBalances();
-            addGlobalMined(granted);
+            addToGlobalProduction(granted);
             showCustomAlert(`⛏️ تم تعدين +${granted} عملة A بنجاح!`);
             return granted;
         }
@@ -978,24 +930,6 @@
             window._alertTimer = setTimeout(() => {
                 alertBox.style.display = "none";
             }, 1600);
-        }
-
-        function getPlayerIdentity() {
-            let userId = "guest";
-            let userName = "لاعب";
-
-            if (
-                window.Telegram &&
-                window.Telegram.WebApp &&
-                window.Telegram.WebApp.initDataUnsafe &&
-                window.Telegram.WebApp.initDataUnsafe.user
-            ) {
-                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-                userId = tgUser.id || "guest";
-                userName = tgUser.first_name || tgUser.username || "لاعب";
-            }
-
-            return { userId, userName };
         }
 
         function openSupportModal() {
@@ -1247,7 +1181,7 @@
 
         detectIncomingReferralCode();
         updateBalances();
-        initGlobalCounter();
+        registerUniquePlayerOnce();
         loop();
     </script>
 </body>
