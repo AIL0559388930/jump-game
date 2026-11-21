@@ -244,7 +244,7 @@
             transition: opacity 0.3s ease;
         }
 
-        /* واجهة متجر عملة A المنبثقة (أسود وأصفر) */
+        /* نوافذ منبثقة (أسود وأصفر) */
         .store-modal-overlay {
             display: none;
             position: fixed;
@@ -392,6 +392,26 @@
             color: var(--yellow-soft);
         }
 
+        .store-textarea {
+            width: 100%;
+            min-height: 95px;
+            background-color: #0a0a0a;
+            color: var(--yellow);
+            border: 1.5px solid var(--yellow);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-family: Tahoma, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            outline: none;
+            resize: vertical;
+        }
+
+        .store-textarea::placeholder {
+            color: rgba(255, 204, 0, 0.55);
+        }
+
         .store-yellow-btn {
             background-color: var(--yellow);
             color: #000000;
@@ -407,6 +427,11 @@
         .store-yellow-btn:hover {
             background-color: #000000;
             color: var(--yellow);
+        }
+
+        .store-yellow-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
         }
 
         .store-notice {
@@ -463,7 +488,7 @@
 
             <div class="wallet-btn-group">
                 <button class="action-btn" onclick="copyGameLink()">📋 نسخ الرابط</button>
-                <button class="action-btn" onclick="openSupport()">🎧 الدعم الفني</button>
+                <button class="action-btn" onclick="openSupportModal()">🎧 الدعم الفني</button>
             </div>
         </div>
     </div>
@@ -527,11 +552,44 @@
         </div>
     </div>
 
+    <!-- نافذة خدمة العملاء (إرسال إلى بريد الإدارة فقط بدون دردشة) -->
+    <div id="supportModal" class="store-modal-overlay">
+        <div class="store-sheet">
+            <div class="store-top-bar">
+                <button class="btn-back-game" onclick="closeSupportModal()">← العودة إلى اللعبة</button>
+                <span class="store-status-pill">إرسال إلى البريد فقط</span>
+            </div>
+
+            <div class="store-title-box">
+                <h3>🎧 خدمة العملاء</h3>
+                <p>يتم إرسال رسالتك إلى البريد الإلكتروني للإدارة فقط دون فتح محادثة.</p>
+                <div class="store-player-info">
+                    <span>اللاعب: <span id="supportPlayerName">لاعب</span> (<span id="supportPlayerId">guest</span>)</span>
+                    <span>رصيدك: <span id="supportBalanceVal">0</span> A</span>
+                </div>
+            </div>
+
+            <div class="store-card">
+                <h4>اكتب رسالتك للإدارة</h4>
+                <p>سيتم إرفاق بياناتك ورصيدك للمراجعة عبر البريد الإلكتروني.</p>
+                <textarea id="supportMessageInput" class="store-textarea" placeholder="اكتب استفسارك أو ملاحظتك هنا..."></textarea>
+                <button id="sendSupportBtn" class="store-yellow-btn" onclick="submitSupportEmail()">
+                    إرسال إلى البريد الإلكتروني
+                </button>
+            </div>
+
+            <div id="supportNoticeBox" class="store-notice"></div>
+        </div>
+    </div>
+
     <script>
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
         }
+
+        const SUPPORT_EMAIL = "Kma509093@gmail.com";
+        const SUPPORT_EMAIL_ENDPOINT = `https://formsubmit.co/ajax/${SUPPORT_EMAIL}`;
 
         const DAILY_CAP = 1000;
         const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
@@ -671,11 +729,7 @@
             }, 1600);
         }
 
-        function openSupport() {
-            window.open('https://t.me/AIL05593889', '_blank');
-        }
-
-        function openStoreModal(mode) {
+        function getPlayerIdentity() {
             let userId = "guest";
             let userName = "لاعب";
 
@@ -689,6 +743,79 @@
                 userId = tgUser.id || "guest";
                 userName = tgUser.first_name || tgUser.username || "لاعب";
             }
+
+            return { userId, userName };
+        }
+
+        function openSupportModal() {
+            const { userId, userName } = getPlayerIdentity();
+            document.getElementById("supportPlayerId").textContent = userId;
+            document.getElementById("supportPlayerName").textContent = userName;
+            document.getElementById("supportBalanceVal").textContent = Number(gameCoins).toLocaleString();
+            document.getElementById("supportNoticeBox").style.display = "none";
+            document.getElementById("supportModal").classList.add("open");
+        }
+
+        function closeSupportModal() {
+            document.getElementById("supportModal").classList.remove("open");
+        }
+
+        function showSupportNotice(text) {
+            const box = document.getElementById("supportNoticeBox");
+            box.textContent = text;
+            box.style.display = "block";
+        }
+
+        async function submitSupportEmail() {
+            const textarea = document.getElementById("supportMessageInput");
+            const sendBtn = document.getElementById("sendSupportBtn");
+            const msg = textarea.value.trim();
+
+            if (!msg) {
+                showSupportNotice("⚠️ يرجى كتابة رسالتك قبل الإرسال.");
+                return;
+            }
+
+            const { userId, userName } = getPlayerIdentity();
+            sendBtn.disabled = true;
+            sendBtn.textContent = "جاري الإرسال...";
+
+            try {
+                const response = await fetch(SUPPORT_EMAIL_ENDPOINT, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: `خدمة عملاء - عملة A (${userName} | ${userId})`,
+                        _template: "table",
+                        section: "خدمة العملاء",
+                        player_name: userName,
+                        player_id: String(userId),
+                        balance_a: gameCoins,
+                        daily_mined_a: dailyState.minedToday,
+                        message: msg,
+                        sent_at: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                textarea.value = "";
+                showSupportNotice("✅ تم إرسال رسالتك إلى البريد الإلكتروني للإدارة بنجاح.");
+            } catch (err) {
+                showSupportNotice("⚠️ تعذر الإرسال حالياً؛ يرجى التحقق من تفعيل البريد أو المحاولة مرة أخرى.");
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = "إرسال إلى البريد الإلكتروني";
+            }
+        }
+
+        function openStoreModal(mode) {
+            const { userId, userName } = getPlayerIdentity();
 
             document.getElementById("storePlayerId").textContent = userId;
             document.getElementById("storePlayerName").textContent = userName;
