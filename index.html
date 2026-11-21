@@ -343,6 +343,15 @@
             display: block;
         }
 
+        .category-heading {
+            border-right: 4px solid var(--yellow);
+            padding-right: 10px;
+            margin: 14px 0 10px;
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--yellow);
+        }
+
         .store-card {
             border: 2px solid var(--yellow);
             border-radius: 12px;
@@ -485,20 +494,42 @@
 
             <!-- قسم متجر A -->
             <div id="panelStore" class="store-panel active">
+                <div class="category-heading">🎁 بطاقات هدايا</div>
+
                 <div class="store-card">
-                    <h4>باقة متجر A الأولى</h4>
-                    <p>سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 5,000 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الأولى (5,000 A)')">
+                    <h4>بطاقة هدايا A الفضية</h4>
+                    <p>بطاقة هدايا رقمية مخصصة لعملة A — سيتم فتح المتجر قريباً.</p>
+                    <div class="store-price">السعر: 2,500 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('بطاقة هدايا A الفضية (2,500 A)')">
                         سيتم فتح المتجر قريباً
                     </button>
                 </div>
 
                 <div class="store-card">
-                    <h4>باقة متجر A الثانية</h4>
-                    <p>سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 15,000 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الثانية (15,000 A)')">
+                    <h4>بطاقة هدايا A الذهبية</h4>
+                    <p>بطاقة هدايا مميزة لعملة A — سيتم فتح المتجر قريباً.</p>
+                    <div class="store-price">السعر: 7,500 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('بطاقة هدايا A الذهبية (7,500 A)')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+
+                <div class="category-heading">💻 منتجات رقمية</div>
+
+                <div class="store-card">
+                    <h4>حزمة تصاميم وخلفيات رقمية</h4>
+                    <p>منتج رقمي جاهز للتسليم — سيتم فتح المتجر قريباً.</p>
+                    <div class="store-price">السعر: 4,000 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('حزمة تصاميم وخلفيات رقمية (4,000 A)')">
+                        سيتم فتح المتجر قريباً
+                    </button>
+                </div>
+
+                <div class="store-card">
+                    <h4>حزمة قوالب وأدوات رقمية</h4>
+                    <p>منتج رقمي متكامل لعملة A — سيتم فتح المتجر قريباً.</p>
+                    <div class="store-price">السعر: 10,000 عملة A</div>
+                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('حزمة قوالب وأدوات رقمية (10,000 A)')">
                         سيتم فتح المتجر قريباً
                     </button>
                 </div>
@@ -558,12 +589,10 @@
                 clockTamperDetected: false
             };
 
-            // كشف الرجوع بالتاريخ للخلف (فارق زمني سالب)
             if (now < state.lastTick - 5000) {
                 state.clockTamperDetected = true;
             }
 
-            // تصفير نافذة الـ 24 ساعة إذا لم يكن هناك تلاعب عكسي ومرّت 24 ساعة
             if (!state.clockTamperDetected && (now - state.windowStart >= WINDOW_24H_MS)) {
                 state.minedToday = 0;
                 state.windowStart = now;
