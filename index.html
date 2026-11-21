@@ -190,6 +190,14 @@
             text-align: center;
         }
 
+        .referral-details {
+            font-size: 12px;
+            color: var(--yellow-soft);
+            line-height: 1.7;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
         .wallet-btn-group {
             display: flex;
             gap: 6px;
@@ -470,6 +478,19 @@
             <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
         </div>
 
+        <!-- مكافأة الدعوة الأسبوعية -->
+        <div class="ton-wallet-box">
+            <div class="wallet-header">🎁 مكافأة دعوة الأصدقاء</div>
+            <div class="referral-details">
+                مكافأة الداعي: <strong>1,000 عملة A</strong> لكل مدعو<br>
+                الحد الأسبوعي: <strong id="referralCountText">0 / 10</strong> مدعوين أسبوعياً
+            </div>
+            <div class="wallet-btn-group">
+                <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الدعوة</button>
+                <button class="action-btn" id="claimReferralBtn" onclick="claimReferralReward()">➕ تسجيل دعوة (+1,000 A)</button>
+            </div>
+        </div>
+
         <!-- لوحة تعدين وحساب اللاعب -->
         <div class="ton-wallet-box">
             <div class="wallet-header">💎 رصيد التعدين المباشر</div>
@@ -594,6 +615,10 @@
         const DAILY_CAP = 1000;
         const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
 
+        const REFERRAL_REWARD = 1000;
+        const WEEKLY_REFERRAL_CAP = 10;
+        const WINDOW_7D_MS = 7 * 24 * 60 * 60 * 1000;
+
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
@@ -602,6 +627,7 @@
         let isGameOver = false;
 
         let dailyState = loadDailyState();
+        let referralState = loadReferralState();
 
         function loadDailyState() {
             const now = Date.now();
@@ -649,6 +675,55 @@
                 dailyState.lastTick = now;
             }
             saveDailyState(dailyState);
+        }
+
+        function loadReferralState() {
+            const now = Date.now();
+            const savedCount = parseInt(localStorage.getItem('pe_weekly_refs')) || 0;
+            const savedStart = parseInt(localStorage.getItem('pe_weekly_ref_start')) || now;
+
+            let state = {
+                invitedThisWeek: Math.min(savedCount, WEEKLY_REFERRAL_CAP),
+                weekStart: savedStart
+            };
+
+            if (now - state.weekStart >= WINDOW_7D_MS) {
+                state.invitedThisWeek = 0;
+                state.weekStart = now;
+            }
+
+            saveReferralState(state);
+            return state;
+        }
+
+        function saveReferralState(state) {
+            localStorage.setItem('pe_weekly_refs', String(state.invitedThisWeek));
+            localStorage.setItem('pe_weekly_ref_start', String(state.weekStart));
+        }
+
+        function refreshReferralWindowIfNeeded() {
+            const now = Date.now();
+            if (now - referralState.weekStart >= WINDOW_7D_MS) {
+                referralState.invitedThisWeek = 0;
+                referralState.weekStart = now;
+                saveReferralState(referralState);
+            }
+        }
+
+        function claimReferralReward() {
+            refreshReferralWindowIfNeeded();
+
+            if (referralState.invitedThisWeek >= WEEKLY_REFERRAL_CAP) {
+                showCustomAlert(`🚫 وصلت للحد الأسبوعي (${WEEKLY_REFERRAL_CAP} مدعوين أسبوعياً).`);
+                updateBalances();
+                return;
+            }
+
+            referralState.invitedThisWeek += 1;
+            gameCoins += REFERRAL_REWARD;
+            saveReferralState(referralState);
+            updateBalances();
+            showCustomAlert(`🎁 تمت إضافة +${REFERRAL_REWARD.toLocaleString()} عملة A لمكافأة الدعوة!`);
         }
 
         function mineACoins(requestedAmount) {
@@ -799,6 +874,7 @@
                         player_id: String(userId),
                         balance_a: gameCoins,
                         daily_mined_a: dailyState.minedToday,
+                        weekly_refs: referralState.invitedThisWeek,
                         message: msg,
                         sent_at: new Date().toISOString()
                     })
@@ -877,9 +953,22 @@
         }
 
         function updateBalances() {
-            document.getElementById("gameCoins").innerText = gameCoins;
+            refreshReferralWindowIfNeeded();
+            document.getElementById("gameCoins").innerText = Number(gameCoins).toLocaleString();
             document.getElementById("dailyCapText").innerText =
                 `التجميع اليومي (24 ساعة): ${Number(dailyState.minedToday).toLocaleString()} / ${DAILY_CAP.toLocaleString()} A`;
+            document.getElementById("referralCountText").innerText =
+                `${referralState.invitedThisWeek} / ${WEEKLY_REFERRAL_CAP}`;
+
+            const refBtn = document.getElementById("claimReferralBtn");
+            if (refBtn) {
+                const isCapped = referralState.invitedThisWeek >= WEEKLY_REFERRAL_CAP;
+                refBtn.disabled = isCapped;
+                refBtn.textContent = isCapped
+                    ? `✅ اكتمل الحد الأسبوعي (${WEEKLY_REFERRAL_CAP})`
+                    : `➕ تسجيل دعوة (+${REFERRAL_REWARD.toLocaleString()} A)`;
+            }
+
             localStorage.setItem('pe_score', score);
             localStorage.setItem('pe_coins', gameCoins);
         }
