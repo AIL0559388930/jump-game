@@ -478,16 +478,16 @@
             <button class="trade-direct-btn" onclick="openStoreModal('trade')">بيع وشراء عملة A</button>
         </div>
 
-        <!-- مكافأة الدعوة الأسبوعية -->
+        <!-- مكافأة الإحالة الأسبوعية -->
         <div class="ton-wallet-box">
-            <div class="wallet-header">🎁 مكافأة دعوة الأصدقاء</div>
+            <div class="wallet-header">🎁 مكافأة الإحالة</div>
             <div class="referral-details">
-                مكافأة الداعي: <strong>1,000 عملة A</strong> لكل مدعو<br>
-                الحد الأسبوعي: <strong id="referralCountText">0 / 10</strong> مدعوين أسبوعياً
+                مكافأة الإحالة: <strong>1,000 عملة A لكل لاعب</strong><br>
+                الحد الأسبوعي: <strong id="referralCountText">0 / 10</strong> لاعبين أسبوعياً
             </div>
             <div class="wallet-btn-group">
-                <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الدعوة</button>
-                <button class="action-btn" id="claimReferralBtn" onclick="claimReferralReward()">➕ تسجيل دعوة (+1,000 A)</button>
+                <button class="action-btn" onclick="copyGameLink()">📋 نسخ رابط الإحالة</button>
+                <button class="action-btn" id="claimReferralBtn" onclick="claimReferralReward()">➕ إحالة لاعب (+1,000 A)</button>
             </div>
         </div>
 
@@ -714,7 +714,7 @@
             refreshReferralWindowIfNeeded();
 
             if (referralState.invitedThisWeek >= WEEKLY_REFERRAL_CAP) {
-                showCustomAlert(`🚫 وصلت للحد الأسبوعي (${WEEKLY_REFERRAL_CAP} مدعوين أسبوعياً).`);
+                showCustomAlert(`🚫 وصلت للحد الأسبوعي (${WEEKLY_REFERRAL_CAP} لاعبين أسبوعياً).`);
                 updateBalances();
                 return;
             }
@@ -723,7 +723,7 @@
             gameCoins += REFERRAL_REWARD;
             saveReferralState(referralState);
             updateBalances();
-            showCustomAlert(`🎁 تمت إضافة +${REFERRAL_REWARD.toLocaleString()} عملة A لمكافأة الدعوة!`);
+            showCustomAlert(`🎁 تمت إضافة +${REFERRAL_REWARD.toLocaleString()} عملة A مكافأة إحالة لكل لاعب!`);
         }
 
         function mineACoins(requestedAmount) {
@@ -966,7 +966,7 @@
                 refBtn.disabled = isCapped;
                 refBtn.textContent = isCapped
                     ? `✅ اكتمل الحد الأسبوعي (${WEEKLY_REFERRAL_CAP})`
-                    : `➕ تسجيل دعوة (+${REFERRAL_REWARD.toLocaleString()} A)`;
+                    : `➕ إحالة لاعب (+${REFERRAL_REWARD.toLocaleString()} A)`;
             }
 
             localStorage.setItem('pe_score', score);
