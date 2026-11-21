@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -60,6 +60,17 @@
             color: var(--yellow);
         }
 
+        .daily-cap-box {
+            border: 1.5px solid var(--yellow);
+            background-color: #000000;
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--yellow-soft);
+        }
+
         .jump-btn {
             background-color: var(--yellow);
             color: #000000;
@@ -84,7 +95,7 @@
             transform: translateY(2px);
         }
 
-        /* الزر الوحيد للانتقال إلى صفحة المتجر */
+        /* الزر الوحيد للانتقال إلى المتجر */
         .store-nav-btn {
             background-color: var(--yellow);
             color: #000000;
@@ -418,6 +429,10 @@
 
         <canvas id="gameCanvas" width="350" height="170"></canvas>
 
+        <div class="daily-cap-box" id="dailyCapText">
+            التجميع اليومي (24 ساعة): 0 / 1,000 A
+        </div>
+
         <button class="jump-btn" onclick="makeJump()">اضغط ليقفز اللاعب ويعدن 🏃‍♂️</button>
 
         <!-- الزر الوحيد للانتقال إلى المتجر -->
@@ -432,11 +447,11 @@
             </div>
 
             <div class="wallet-total">
-                🚀 التعدين نشط ومستمر تلقائياً مع اللعب!
+                🚀 الحد الأقصى للتجميع: 1,000 عملة A كل 24 ساعة
             </div>
 
             <div class="wallet-btn-group">
-                <button class="disabled-withdraw-btn" onclick="alert('⚠️ خاصية سحب العملات مغلقة حالياً وسيتم تفعيلها قريباً!')">🔒 سحب عملة A (موقّف حالياً)</button>
+                <button class="disabled-withdraw-btn" onclick="alert('السحب قريباً')">🔒 السحب قريباً</button>
             </div>
 
             <div class="wallet-btn-group">
@@ -446,17 +461,17 @@
         </div>
     </div>
 
-    <!-- واجهة متجر بيع وشراء عملة A (يدوي وموقّف حالياً) -->
+    <!-- واجهة متجر بيع وشراء عملة A -->
     <div id="storeModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
                 <button class="btn-back-game" onclick="closeStoreModal()">← العودة إلى اللعبة</button>
-                <span class="store-status-pill">الوضع: يدوي وموقّف حالياً</span>
+                <span class="store-status-pill">سيتم فتح المتجر قريباً</span>
             </div>
 
             <div class="store-title-box">
                 <h3>متجر بيع وشراء عملة A</h3>
-                <p>إدارة يدوية بالكامل — التنفيذ والخصم التلقائي متوقفان حالياً.</p>
+                <p>سيتم فتح المتجر قريباً.</p>
                 <div class="store-player-info">
                     <span>اللاعب: <span id="storePlayerName">لاعب</span> (<span id="storePlayerId">guest</span>)</span>
                     <span>رصيدك: <span id="storeBalanceVal">0</span> A</span>
@@ -472,19 +487,19 @@
             <div id="panelStore" class="store-panel active">
                 <div class="store-card">
                     <h4>باقة متجر A الأولى</h4>
-                    <p>معاينة عرض داخل متجر A — المعالجة يدوية ومتوقفة حالياً.</p>
+                    <p>سيتم فتح المتجر قريباً.</p>
                     <div class="store-price">السعر: 5,000 عملة A</div>
                     <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الأولى (5,000 A)')">
-                        طلب شراء (موقّف حالياً)
+                        سيتم فتح المتجر قريباً
                     </button>
                 </div>
 
                 <div class="store-card">
                     <h4>باقة متجر A الثانية</h4>
-                    <p>معاينة عرض داخل متجر A — المعالجة يدوية ومتوقفة حالياً.</p>
+                    <p>سيتم فتح المتجر قريباً.</p>
                     <div class="store-price">السعر: 15,000 عملة A</div>
                     <button class="store-yellow-btn" onclick="triggerPausedStoreAction('متجر A - باقة الثانية (15,000 A)')">
-                        طلب شراء (موقّف حالياً)
+                        سيتم فتح المتجر قريباً
                     </button>
                 </div>
             </div>
@@ -492,18 +507,18 @@
             <!-- قسم بيع وشراء A -->
             <div id="panelTrade" class="store-panel">
                 <div class="store-card">
-                    <h4>شراء عملة A (يدوي - موقّف حالياً)</h4>
+                    <h4>شراء عملة A</h4>
                     <input type="number" id="storeBuyQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للشراء" min="1">
                     <button class="store-yellow-btn" onclick="triggerPausedTradeAction('شراء عملة A', 'storeBuyQty')">
-                        إرسال طلب شراء (موقّف حالياً)
+                        سيتم فتح المتجر قريباً
                     </button>
                 </div>
 
                 <div class="store-card">
-                    <h4>بيع / استبدال عملة A (يدوي - موقّف حالياً)</h4>
+                    <h4>بيع / استبدال عملة A</h4>
                     <input type="number" id="storeSellQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للبيع أو الاستبدال" min="1">
                     <button class="store-yellow-btn" onclick="triggerPausedTradeAction('بيع / استبدال عملة A', 'storeSellQty')">
-                        إرسال طلب بيع (موقّف حالياً)
+                        سيتم فتح المتجر قريباً
                     </button>
                 </div>
             </div>
@@ -518,12 +533,92 @@
             window.Telegram.WebApp.expand();
         }
 
+        const DAILY_CAP = 1000;
+        const WINDOW_24H_MS = 24 * 60 * 60 * 1000;
+
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
         let isGameOver = false;
+
+        let dailyState = loadDailyState();
+
+        function loadDailyState() {
+            const now = Date.now();
+            const savedMined = parseInt(localStorage.getItem('pe_daily_mined')) || 0;
+            const savedWindowStart = parseInt(localStorage.getItem('pe_daily_window_start')) || now;
+            const savedLastTick = parseInt(localStorage.getItem('pe_last_tick_time')) || now;
+
+            let state = {
+                minedToday: savedMined,
+                windowStart: savedWindowStart,
+                lastTick: savedLastTick,
+                clockTamperDetected: false
+            };
+
+            // كشف الرجوع بالتاريخ للخلف (فارق زمني سالب)
+            if (now < state.lastTick - 5000) {
+                state.clockTamperDetected = true;
+            }
+
+            // تصفير نافذة الـ 24 ساعة إذا لم يكن هناك تلاعب عكسي ومرّت 24 ساعة
+            if (!state.clockTamperDetected && (now - state.windowStart >= WINDOW_24H_MS)) {
+                state.minedToday = 0;
+                state.windowStart = now;
+            }
+
+            state.lastTick = Math.max(now, state.lastTick);
+            saveDailyState(state);
+            return state;
+        }
+
+        function saveDailyState(state) {
+            localStorage.setItem('pe_daily_mined', String(state.minedToday));
+            localStorage.setItem('pe_daily_window_start', String(state.windowStart));
+            localStorage.setItem('pe_last_tick_time', String(state.lastTick));
+        }
+
+        function refreshDailyWindowIfNeeded() {
+            const now = Date.now();
+            if (now < dailyState.lastTick - 5000) {
+                dailyState.clockTamperDetected = true;
+            }
+            if (!dailyState.clockTamperDetected && (now - dailyState.windowStart >= WINDOW_24H_MS)) {
+                dailyState.minedToday = 0;
+                dailyState.windowStart = now;
+            }
+            if (now > dailyState.lastTick) {
+                dailyState.lastTick = now;
+            }
+            saveDailyState(dailyState);
+        }
+
+        function mineACoins(requestedAmount) {
+            refreshDailyWindowIfNeeded();
+
+            if (dailyState.clockTamperDetected) {
+                showCustomAlert("⚠️ تم رصد فارق زمني غير طبيعي؛ التجميع مقيّد حالياً.");
+                updateBalances();
+                return 0;
+            }
+
+            const remaining = Math.max(0, DAILY_CAP - dailyState.minedToday);
+            if (remaining <= 0) {
+                showCustomAlert("⏳ وصلت للحد اليومي (1,000 عملة A خلال 24 ساعة).");
+                updateBalances();
+                return 0;
+            }
+
+            const granted = Math.min(requestedAmount, remaining);
+            gameCoins += granted;
+            dailyState.minedToday += granted;
+            saveDailyState(dailyState);
+            updateBalances();
+            showCustomAlert(`⛏️ تم تعدين +${granted} عملة A بنجاح!`);
+            return granted;
+        }
 
         let amir = {
             x: 40,
@@ -568,12 +663,14 @@
             });
         }
 
-        function showMiningPopup() {
+        function showCustomAlert(messageText) {
             const alertBox = document.getElementById("miningAlert");
+            alertBox.textContent = messageText;
             alertBox.style.display = "block";
-            setTimeout(() => {
+            clearTimeout(window._alertTimer);
+            window._alertTimer = setTimeout(() => {
                 alertBox.style.display = "none";
-            }, 1500);
+            }, 1600);
         }
 
         function openSupport() {
@@ -622,27 +719,20 @@
         }
 
         function triggerPausedStoreAction(label) {
-            showStoreNotice(
-                `النظام يعمل يدوياً وهو موقّف حالياً (${label}). لم يتم خصم أي رصيد من حسابك.`
-            );
+            showStoreNotice(`سيتم فتح المتجر قريباً (${label}).`);
         }
 
         function triggerPausedTradeAction(actionLabel, inputId) {
             const val = document.getElementById(inputId).value.trim();
             const qtyStr = val ? ` — الكمية المدخلة: ${Number(val).toLocaleString()} A` : "";
-            showStoreNotice(
-                `طلب "${actionLabel}"${qtyStr} متوقف حالياً ضمن الإدارة اليدوية ولم يتم تنفيذ أي عملية.`
-            );
+            showStoreNotice(`سيتم فتح المتجر قريباً — ${actionLabel}${qtyStr}.`);
         }
 
         function makeJump() {
             if (amir.grounded && !isGameOver) {
                 amir.dy = amir.jumpPower;
                 amir.grounded = false;
-
-                gameCoins += 1;
-                updateBalances();
-                showMiningPopup();
+                mineACoins(1);
             } else if (isGameOver) {
                 resetGame();
             }
@@ -650,11 +740,14 @@
 
         function updateBalances() {
             document.getElementById("gameCoins").innerText = gameCoins;
+            document.getElementById("dailyCapText").innerText =
+                `التجميع اليومي (24 ساعة): ${Number(dailyState.minedToday).toLocaleString()} / ${DAILY_CAP.toLocaleString()} A`;
             localStorage.setItem('pe_score', score);
             localStorage.setItem('pe_coins', gameCoins);
         }
 
         function update() {
+            refreshDailyWindowIfNeeded();
             if (isGameOver) return;
 
             amir.dy += amir.gravity;
@@ -678,9 +771,7 @@
                 obstacle.x = 350;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
-                gameCoins += 2;
-                updateBalances();
-                showMiningPopup();
+                mineACoins(2);
             }
 
             let amirBox = { x: amir.x + 6, y: amir.y + 6, width: amir.width - 12, height: amir.height - 8 };
@@ -764,7 +855,7 @@
             isGameOver = false;
         }
 
-        updateBalances() 
+        updateBalances();
         loop();
     </script>
 </body>
