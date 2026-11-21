@@ -343,15 +343,6 @@
             display: block;
         }
 
-        .category-heading {
-            border-right: 4px solid var(--yellow);
-            padding-right: 10px;
-            margin: 14px 0 10px;
-            font-size: 15px;
-            font-weight: 900;
-            color: var(--yellow);
-        }
-
         .store-card {
             border: 2px solid var(--yellow);
             border-radius: 12px;
@@ -368,16 +359,9 @@
         }
 
         .store-card p {
-            margin: 0 0 10px;
+            margin: 0 0 12px;
             font-size: 13px;
             color: var(--yellow-soft);
-        }
-
-        .store-price {
-            font-size: 14px;
-            font-weight: 900;
-            color: var(--yellow);
-            margin-bottom: 10px;
         }
 
         .store-yellow-btn {
@@ -395,23 +379,6 @@
         .store-yellow-btn:hover {
             background-color: #000000;
             color: var(--yellow);
-        }
-
-        .store-input {
-            width: 100%;
-            background-color: #0a0a0a;
-            color: var(--yellow);
-            border: 1.5px solid var(--yellow);
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            outline: none;
-        }
-
-        .store-input::placeholder {
-            color: rgba(255, 204, 0, 0.55);
         }
 
         .store-notice {
@@ -470,7 +437,7 @@
         </div>
     </div>
 
-    <!-- واجهة متجر بيع وشراء عملة A -->
+    <!-- واجهة المتجر بقسمين فقط: بطاقة هدايا و منتجات رقميه (بدون أسعار) -->
     <div id="storeModal" class="store-modal-overlay">
         <div class="store-sheet">
             <div class="store-top-bar">
@@ -488,67 +455,27 @@
             </div>
 
             <div class="store-tabs">
-                <button id="tabStoreBtn" class="store-tab-btn active" onclick="switchStoreTab('store')">متجر A</button>
-                <button id="tabTradeBtn" class="store-tab-btn" onclick="switchStoreTab('trade')">بيع وشراء A</button>
+                <button id="tabGiftsBtn" class="store-tab-btn active" onclick="switchStoreTab('gifts')">بطاقة هدايا</button>
+                <button id="tabDigitalBtn" class="store-tab-btn" onclick="switchStoreTab('digital')">منتجات رقميه</button>
             </div>
 
-            <!-- قسم متجر A -->
-            <div id="panelStore" class="store-panel active">
-                <div class="category-heading">🎁 بطاقات هدايا</div>
-
+            <!-- القسم الأول: بطاقة هدايا -->
+            <div id="panelGifts" class="store-panel active">
                 <div class="store-card">
-                    <h4>بطاقة هدايا A الفضية</h4>
-                    <p>بطاقة هدايا رقمية مخصصة لعملة A — سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 2,500 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('بطاقة هدايا A الفضية (2,500 A)')">
-                        سيتم فتح المتجر قريباً
-                    </button>
-                </div>
-
-                <div class="store-card">
-                    <h4>بطاقة هدايا A الذهبية</h4>
-                    <p>بطاقة هدايا مميزة لعملة A — سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 7,500 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('بطاقة هدايا A الذهبية (7,500 A)')">
-                        سيتم فتح المتجر قريباً
-                    </button>
-                </div>
-
-                <div class="category-heading">💻 منتجات رقمية</div>
-
-                <div class="store-card">
-                    <h4>حزمة تصاميم وخلفيات رقمية</h4>
-                    <p>منتج رقمي جاهز للتسليم — سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 4,000 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('حزمة تصاميم وخلفيات رقمية (4,000 A)')">
-                        سيتم فتح المتجر قريباً
-                    </button>
-                </div>
-
-                <div class="store-card">
-                    <h4>حزمة قوالب وأدوات رقمية</h4>
-                    <p>منتج رقمي متكامل لعملة A — سيتم فتح المتجر قريباً.</p>
-                    <div class="store-price">السعر: 10,000 عملة A</div>
-                    <button class="store-yellow-btn" onclick="triggerPausedStoreAction('حزمة قوالب وأدوات رقمية (10,000 A)')">
+                    <h4>بطاقة هدايا</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('بطاقة هدايا')">
                         سيتم فتح المتجر قريباً
                     </button>
                 </div>
             </div>
 
-            <!-- قسم بيع وشراء A -->
-            <div id="panelTrade" class="store-panel">
+            <!-- القسم الثاني: منتجات رقميه -->
+            <div id="panelDigital" class="store-panel">
                 <div class="store-card">
-                    <h4>شراء عملة A</h4>
-                    <input type="number" id="storeBuyQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للشراء" min="1">
-                    <button class="store-yellow-btn" onclick="triggerPausedTradeAction('شراء عملة A', 'storeBuyQty')">
-                        سيتم فتح المتجر قريباً
-                    </button>
-                </div>
-
-                <div class="store-card">
-                    <h4>بيع / استبدال عملة A</h4>
-                    <input type="number" id="storeSellQty" class="store-input" placeholder="أدخل كمية عملة A المطلوبة للبيع أو الاستبدال" min="1">
-                    <button class="store-yellow-btn" onclick="triggerPausedTradeAction('بيع / استبدال عملة A', 'storeSellQty')">
+                    <h4>منتجات رقميه</h4>
+                    <p>سيتم فتح المتجر قريباً.</p>
+                    <button class="store-yellow-btn" onclick="triggerSoonNotice('منتجات رقميه')">
                         سيتم فتح المتجر قريباً
                     </button>
                 </div>
@@ -733,28 +660,18 @@
         }
 
         function switchStoreTab(tabName) {
-            const isStore = tabName === "store";
-            document.getElementById("tabStoreBtn").classList.toggle("active", isStore);
-            document.getElementById("tabTradeBtn").classList.toggle("active", !isStore);
-            document.getElementById("panelStore").classList.toggle("active", isStore);
-            document.getElementById("panelTrade").classList.toggle("active", !isStore);
+            const isGifts = tabName === "gifts";
+            document.getElementById("tabGiftsBtn").classList.toggle("active", isGifts);
+            document.getElementById("tabDigitalBtn").classList.toggle("active", !isGifts);
+            document.getElementById("panelGifts").classList.toggle("active", isGifts);
+            document.getElementById("panelDigital").classList.toggle("active", !isGifts);
             document.getElementById("storeNoticeBox").style.display = "none";
         }
 
-        function showStoreNotice(msg) {
+        function triggerSoonNotice(sectionTitle) {
             const box = document.getElementById("storeNoticeBox");
-            box.textContent = msg;
+            box.textContent = `سيتم فتح المتجر قريباً (${sectionTitle}).`;
             box.style.display = "block";
-        }
-
-        function triggerPausedStoreAction(label) {
-            showStoreNotice(`سيتم فتح المتجر قريباً (${label}).`);
-        }
-
-        function triggerPausedTradeAction(actionLabel, inputId) {
-            const val = document.getElementById(inputId).value.trim();
-            const qtyStr = val ? ` — الكمية المدخلة: ${Number(val).toLocaleString()} A` : "";
-            showStoreNotice(`سيتم فتح المتجر قريباً — ${actionLabel}${qtyStr}.`);
         }
 
         function makeJump() {
