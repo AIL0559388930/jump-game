@@ -59,7 +59,7 @@
 
         .global-stats-box {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
             background-color: var(--red-bg);
             border: 1.5px solid var(--gold);
@@ -76,33 +76,27 @@
         }
 
         .global-stat-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
             color: var(--gold-soft);
             margin-bottom: 4px;
         }
 
         .global-stat-value {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 900;
             color: var(--gold);
-        }
-
-        .global-stat-divider {
-            width: 1px;
-            height: 28px;
-            background-color: var(--gold);
-            opacity: 0.45;
-            margin: 0 8px;
         }
 
         canvas {
             background: #87CEEB;
             border: 2px solid var(--gold);
-            border-radius: 10px;
+            border-radius: 12px;
             display: block;
             margin: 0 auto;
+            width: 100%;
             max-width: 100%;
+            cursor: pointer;
         }
 
         .score-board {
@@ -127,7 +121,7 @@
             background-color: var(--gold);
             color: #000000;
             border: 2px solid var(--gold);
-            padding: 12px 20px;
+            padding: 13px 20px;
             font-size: 16px;
             border-radius: 10px;
             cursor: pointer;
@@ -517,11 +511,6 @@
     <div class="game-container">
         <div id="globalStatsBox" class="global-stats-box">
             <div class="global-stat-item">
-                <div class="global-stat-title">عدد اللاعبين</div>
-                <div id="globalPlayersCount" class="global-stat-value">0</div>
-            </div>
-            <div class="global-stat-divider"></div>
-            <div class="global-stat-item">
                 <div class="global-stat-title">إجمالي إنتاج عملة A</div>
                 <div id="globalTotalMined" class="global-stat-value">0 A</div>
             </div>
@@ -529,7 +518,7 @@
 
         <div class="score-board">النقاط: <span id="score">0</span></div>
 
-        <canvas id="gameCanvas" width="350" height="170"></canvas>
+        <canvas id="gameCanvas" width="380" height="260" onclick="makeJump()"></canvas>
 
         <div class="daily-cap-box" id="dailyCapText">
             التجميع اليومي (24 ساعة): 0 / 1,000 A
@@ -677,26 +666,21 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
+        const GROUND_Y = 210;
+
         let score = parseInt(localStorage.getItem('pe_score')) || 0;
         let gameCoins = parseInt(localStorage.getItem('pe_coins')) || 0;
         let isGameOver = false;
 
-        let totalGlobalPlayers = parseInt(localStorage.getItem('pe_global_players')) || 0;
         let totalGlobalMined = parseInt(localStorage.getItem('pe_global_mined')) || 0;
 
         let dailyState = loadDailyState();
         let referralState = loadReferralState();
 
         function renderGlobalCounterUI() {
-            localStorage.setItem('pe_global_players', String(totalGlobalPlayers));
             localStorage.setItem('pe_global_mined', String(totalGlobalMined));
 
-            const playersEl = document.getElementById("globalPlayersCount");
             const minedEl = document.getElementById("globalTotalMined");
-
-            if (playersEl) {
-                playersEl.innerText = Number(totalGlobalPlayers || 0).toLocaleString();
-            }
             if (minedEl) {
                 minedEl.innerText = Number(totalGlobalMined || 0).toLocaleString() + " A";
             }
@@ -718,29 +702,6 @@
             }
 
             return { userId, userName };
-        }
-
-        function getUniquePlayerKey() {
-            const { userId } = getPlayerIdentity();
-            if (userId && String(userId) !== "guest") {
-                return "tg_" + String(userId);
-            }
-            let guestKey = localStorage.getItem("pe_guest_unique_key");
-            if (!guestKey) {
-                guestKey = "guest_" + Date.now().toString(36) + "_" + Math.random().toString(36).substring(2, 7);
-                localStorage.setItem("pe_guest_unique_key", guestKey);
-            }
-            return guestKey;
-        }
-
-        function registerUniquePlayerOnce() {
-            const key = getUniquePlayerKey();
-            const flagName = "pe_seen_player_" + key;
-            if (!localStorage.getItem(flagName)) {
-                totalGlobalPlayers += 1;
-                localStorage.setItem(flagName, "1");
-            }
-            renderGlobalCounterUI();
         }
 
         function addToGlobalProduction(amount) {
@@ -876,12 +837,12 @@
         }
 
         let amir = {
-            x: 40,
-            y: 95,
-            width: 30,
-            height: 35,
+            x: 45,
+            y: GROUND_Y - 38,
+            width: 34,
+            height: 38,
             dy: 0,
-            jumpPower: -10,
+            jumpPower: -11.5,
             gravity: 0.55,
             grounded: true
         };
@@ -889,20 +850,20 @@
         const carTypes = ["🚙", "🚗", "🚕", "🚐"];
 
         let obstacle = {
-            x: 350,
-            y: 100,
-            width: 30,
-            height: 30,
-            speed: 2.0,
+            x: canvas.width,
+            y: GROUND_Y - 32,
+            width: 34,
+            height: 32,
+            speed: 2.1,
             currentCar: "🚙"
         };
 
         let buildings = [
-            { x: 0, width: 60, height: 75, color: "#7f8c8d" },
-            { x: 70, width: 70, height: 95, color: "#95a5a6" },
-            { x: 150, width: 65, height: 85, color: "#BDC3C7" },
-            { x: 225, width: 75, height: 105, color: "#65737e" },
-            { x: 310, width: 60, height: 80, color: "#546e7a" }
+            { x: 0, width: 65, height: 115, color: "#7f8c8d" },
+            { x: 75, width: 75, height: 145, color: "#95a5a6" },
+            { x: 160, width: 70, height: 130, color: "#BDC3C7" },
+            { x: 240, width: 80, height: 160, color: "#65737e" },
+            { x: 330, width: 65, height: 125, color: "#546e7a" }
         ];
 
         function getRandomCar() {
@@ -1077,8 +1038,8 @@
             amir.dy += amir.gravity;
             amir.y += amir.dy;
 
-            if (amir.y > 95) {
-                amir.y = 95;
+            if (amir.y > GROUND_Y - amir.height) {
+                amir.y = GROUND_Y - amir.height;
                 amir.dy = 0;
                 amir.grounded = true;
             }
@@ -1091,8 +1052,8 @@
             });
 
             obstacle.x -= obstacle.speed;
-            if (obstacle.x < -30) {
-                obstacle.x = 350;
+            if (obstacle.x < -34) {
+                obstacle.x = canvas.width;
                 obstacle.currentCar = getRandomCar();
                 score += 10;
                 mineACoins(2);
@@ -1119,47 +1080,47 @@
 
             buildings.forEach(b => {
                 ctx.fillStyle = b.color;
-                ctx.fillRect(b.x, 130 - b.height, b.width, b.height);
+                ctx.fillRect(b.x, GROUND_Y - b.height, b.width, b.height);
 
                 ctx.fillStyle = "rgba(255,255,255,0.6)";
                 for (let wx = b.x + 8; wx < b.x + b.width - 8; wx += 12) {
-                    for (let wy = 130 - b.height + 10; wy < 120; wy += 15) {
-                        ctx.fillRect(wx, wy, 4, 7);
+                    for (let wy = GROUND_Y - b.height + 12; wy < GROUND_Y - 12; wy += 16) {
+                        ctx.fillRect(wx, wy, 4, 8);
                     }
                 }
             });
 
             ctx.fillStyle = "#34495e";
-            ctx.fillRect(0, 130, canvas.width, 40);
+            ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
 
             ctx.fillStyle = "#f1c40f";
             for (let i = 0; i < canvas.width; i += 30) {
-                ctx.fillRect(i - (score * 2) % 30, 148, 15, 3);
+                ctx.fillRect(i - (score * 2) % 30, GROUND_Y + 22, 16, 4);
             }
 
             ctx.save();
             ctx.translate(amir.x + amir.width / 2, amir.y + amir.height / 2);
             ctx.scale(-1, 1);
-            ctx.font = "26px Arial";
+            ctx.font = "30px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("🏃‍♂️", 0, 2);
             ctx.restore();
 
-            ctx.font = "24px Arial";
-            ctx.fillText(obstacle.currentCar, obstacle.x, obstacle.y + 22);
+            ctx.font = "28px Arial";
+            ctx.fillText(obstacle.currentCar, obstacle.x, obstacle.y + 24);
 
             if (isGameOver) {
                 ctx.fillStyle = "rgba(59, 7, 7, 0.78)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                 ctx.fillStyle = "#ffcc00";
-                ctx.font = "18px Tahoma";
+                ctx.font = "bold 22px Tahoma";
                 ctx.textAlign = "center";
-                ctx.fillText("انتهت اللعبة!", canvas.width / 2, 60);
+                ctx.fillText("انتهت اللعبة!", canvas.width / 2, canvas.height / 2 - 14);
 
-                ctx.font = "13px Tahoma";
-                ctx.fillText("اضغط للبدء والتعدين من جديد", canvas.width / 2, 95);
+                ctx.font = "15px Tahoma";
+                ctx.fillText("اضغط للبدء والتعدين من جديد", canvas.width / 2, canvas.height / 2 + 22);
             }
 
             document.getElementById("score").innerText = score;
@@ -1173,15 +1134,15 @@
 
         function resetGame() {
             score = 0;
-            obstacle.x = 350;
-            obstacle.speed = 2.0;
+            obstacle.x = canvas.width;
+            obstacle.speed = 2.1;
             obstacle.currentCar = getRandomCar();
             isGameOver = false;
         }
 
         detectIncomingReferralCode();
+        renderGlobalCounterUI();
         updateBalances();
-        registerUniquePlayerOnce();
         loop();
     </script>
 </body>
