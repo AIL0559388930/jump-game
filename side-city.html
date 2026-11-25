@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>عملة A - تجربة المدينة الجانبية</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    body {
+      background: #0b0612;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #fff;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .hud {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .badge {
+      background: rgba(25, 8, 12, 0.84);
+      border: 1.5px solid #ffd54f;
+      box-shadow: 0 0 14px rgba(255, 213, 79, 0.4);
+      padding: 8px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #ffd54f;
+      backdrop-filter: blur(4px);
+    }
+
+    .joystick-zone {
+      position: fixed;
+      bottom: 26px;
+      left: 22px;
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: rgba(15, 10, 20, 0.5);
+      border: 2px solid rgba(255, 213, 79, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      backdrop-filter: blur(3px);
+    }
+
+    .joystick-knob {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff59d, #ff8f00);
+      box-shadow: 0 0 16px rgba(255, 193, 7, 0.9);
+      transform: translate(0px, 0px);
+    }
+
+    .action-buttons {
+      position: fixed;
+      bottom: 26px;
+      right: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 20;
+    }
+
+    .action-btn {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      border: 2px solid #ffd54f;
+      background: radial-gradient(circle, rgba(211, 47, 47, 0.88), rgba(90, 10, 10, 0.92));
+      color: #ffd54f;
+      font-size: 23px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(255, 82, 82, 0.55);
+    }
+
+    .action-btn:active {
+      transform: scale(0.92);
+      background: #ffd54f;
+      color: #7f0000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud">
+    <div class="badge">🪙 عملة A: <span id="coins">0</span></div>
+    <div class="badge">⚡ الطاقة: <span id="energy">100%</span></div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="joystick-zone" id="joystickZone">
+    <div class="joystick-knob" id="joystickKnob"></div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="action-btn" id="dashBtn" title="سرعة خارقة">⚡</button>
+    <button class="action-btn" id="jumpBtn" title="قفز">⬆️</button>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    let coinsCount = 0;
+    let energy = 100;
+    let cameraX = 0;
+    let moveInputX = 0;
+    let dashTimer = 0;
+
+    const coinsEl = document.getElementById("coins");
+    const energyEl = document.getElementById("energy");
+
+    function getGroundY() {
+      return canvas.height - 148;
+    }
+
+    const hero = {
+      x: 150,
+      y: getGroundY(),
+      vx: 0,
+      vy: 0,
+      width: 58,
+      height: 96,
+      facing: 1,
+      onGround: true,
+      walkCycle: 0,
+      trail: []
+    };
+
+    const buildings = [];
+    for (let i = -6; i < 80; i++) {
+      const seed = Math.abs(i * 97 + 13);
+      buildings.push({
+        x: i * 155,
+        w: 112 + (seed % 46),
+        h: 190 + (seed % 230),
+        bodyGrad: i % 2 === 0 ? "#1b142c" : "#251a3b",
+        accent: i % 3 === 0 ? "#ff5252" : (i % 3 === 1 ? "#ffd54f" : "#ff80ab"),
+        hasAwning: i % 4 === 0
+      });
+    }
+
+    const coins = [];
+    for (let i = 1; i <= 60; i++) {
+      coins.push({
+        x: i * 185 + 130,
+        y: getGroundY() - (i % 3 === 0 ? 115 : 44),
+        collected: false,
+        pulse: i * 0.55
+      });
+    }
+
+    const joyZone = document.getElementById("joystickZone");
+    const joyKnob = document.getElementById("joystickKnob");
+    let joyActive = false;
+
+    function updateJoystick(clientX) {
+      const rect = joyZone.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const maxDist = rect.width / 2 - 20;
+      let dx = clientX - centerX;
+      if (dx > maxDist) dx = maxDist;
+      if (dx < -maxDist) dx = -maxDist;
+
+      joyKnob.style.transform = `translate(${dx}px, 0px)`;
+      moveInputX = dx / maxDist;
+    }
+
+    joyZone.addEventListener("touchstart", (e) => {
+      joyActive = true;
+      updateJoystick(e.touches[0].clientX);
+    });
+    joyZone.addEventListener("touchmove", (e) => {
+      if (!joyActive) return;
+      updateJoystick(e.touches[0].clientX);
+    });
+    const resetJoystick = () => {
+      joyActive = false;
+      moveInputX = 0;
+      joyKnob.style.transform = `translate(0px, 0px)`;
+    };
+    joyZone.addEventListener("touchend", resetJoystick);
+    joyZone.addEventListener("touchcancel", resetJoystick);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "d") moveInputX = 1;
+      if (e.key === "ArrowLeft" || e.key === "a") moveInputX = -1;
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === " ") jump();
+      if (e.key === "Shift") dash();
+    });
+    window.addEventListener("keyup", (e) => {
+      if (["ArrowRight", "ArrowLeft", "a", "d"].includes(e.key)) moveInputX = 0;
+    });
+
+    function jump() {
+      if (hero.onGround) {
+        hero.vy = -15.5;
+        hero.onGround = false;
+      }
+    }
+    document.getElementById("jumpBtn").addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      jump();
+    });
+    document.getElementById("jumpBtn").addEventListener("click", jump);
+
+    function dash() {
+      if (energy >= 20 && dashTimer <= 0) {
+        dashTimer = 16;
+        energy -= 20;
+        energyEl.textContent = energy + "%";
+      }
+    }
+    document.getElementById("dashBtn").addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      dash();
+    });
+    document.getElementById("dashBtn").addEventListener("click", dash);
+
+    function drawCity() {
+      const groundY = getGroundY();
+
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+      skyGrad.addColorStop(0, "#0b0618");
+      skyGrad.addColorStop(0.55, "#26143d");
+      skyGrad.addColorStop(1, "#4c1c2c");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, canvas.width, groundY);
+
+      for (let i = -2; i < 30; i++) {
+        const signX = i * 340 - (cameraX * 0.25) % 340;
+        ctx.fillStyle = i % 2 === 0 ? "rgba(255, 82, 82, 0.14)" : "rgba(255, 213, 79, 0.14)";
+        ctx.fillRect(signX + 40, groundY - 290, 90, 26);
+      }
+
+      buildings.forEach((b) => {
+        const screenX = b.x - cameraX * 0.62;
+        if (screenX + b.w < -120 || screenX > canvas.width + 120) return;
+
+        ctx.fillStyle = b.bodyGrad;
+        ctx.fillRect(screenX, groundY - b.h, b.w, b.h);
+
+        ctx.fillStyle = b.accent;
+        ctx.fillRect(screenX, groundY - b.h, b.w, 4);
+
+        for (let wy = groundY - b.h + 22; wy < groundY - 34; wy += 28) {
+          for (let wx = screenX + 14; wx < screenX + b.w - 22; wx += 24) {
+            const lit = ((Math.floor(wx + wy)) % 3) !== 0;
+            ctx.fillStyle = lit ? "rgba(255, 224, 130, 0.28)" : "rgba(15, 10, 25, 0.45)";
+            ctx.fillRect(wx, wy, 11, 14);
+          }
+        }
+
+        if (b.hasAwning) {
+          const awningY = groundY - 64;
+          const stripes = 6;
+          const sw = (b.w - 16) / stripes;
+          for (let s = 0; s < stripes; s++) {
+            ctx.fillStyle = s % 2 === 0 ? "#d32f2f" : "#fff8e1";
+            ctx.fillRect(screenX + 8 + s * sw, awningY, sw, 14);
+          }
+        }
+      });
+
+      ctx.fillStyle = "#332b42";
+      ctx.fillRect(0, groundY, canvas.width, 18);
+
+      ctx.fillStyle = "#15111e";
+      ctx.fillRect(0, groundY + 18, canvas.width, canvas.height - groundY);
+
+      ctx.fillStyle = "#ffd54f";
+      const stripeOffset = -(cameraX % 96);
+      for (let sx = stripeOffset; sx < canvas.width + 96; sx += 96) {
+        ctx.fillRect(sx, groundY + 62, 48, 6);
+      }
+    }
+
+    function drawCoins() {
+      coins.forEach((c) => {
+        if (c.collected) return;
+        c.pulse += 0.08;
+        const screenX = c.x - cameraX;
+        if (screenX < -50 || screenX > canvas.width + 50) return;
+
+        const floatY = c.y + Math.sin(c.pulse) * 6;
+
+        ctx.beginPath();
+        ctx.arc(screenX, floatY, 20, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 213, 79, 0.25)";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(screenX, floatY, 13.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffc107";
+        ctx.fill();
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = "#fff8e1";
+        ctx.stroke();
+
+        ctx.fillStyle = "#4e1600";
+        ctx.font = "bold 14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("A", screenX, floatY + 1);
+      });
+    }
+
+    function drawHero() {
+      const screenX = hero.x - cameraX;
+      const groundY = getGroundY();
+      const isMoving = Math.abs(hero.vx) > 0.4;
+      const bobY = (hero.onGround && isMoving) ? Math.abs(Math.sin(hero.walkCycle)) * 5 : 0;
+      const swing = hero.onGround ? Math.sin(hero.walkCycle) * (isMoving ? 13 : 2) : 10;
+
+      ctx.beginPath();
+      ctx.ellipse(screenX, groundY + 4, 24, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx.fill();
+
+      hero.trail.forEach((t, idx) => {
+        const alpha = (idx / hero.trail.length) * 0.42;
+        ctx.strokeStyle = `rgba(255, 213, 79, ${alpha})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(t.x - cameraX, t.y - 46, 26, -0.8, 1.2);
+        ctx.stroke();
+      });
+
+      ctx.save();
+      ctx.translate(screenX, groundY - bobY);
+      ctx.scale(hero.facing * 1.15, 1.15);
+
+      ctx.strokeStyle = "rgba(255, 224, 130, 0.7)";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.ellipse(0, -42, 24, 34, 0.25, 0.2, Math.PI * 1.65);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#9e1414";
+      ctx.lineWidth = 8.5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-4, -34);
+      ctx.lineTo(-4 - swing, -4);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#ffd54f";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(-4, -26);
+      ctx.lineTo(-4 - swing * 0.7, -10);
+      ctx.stroke();
+
+      const torsoGrad = ctx.createLinearGradient(-15, -62, 15, -30);
+      torsoGrad.addColorStop(0, "#ff3d3d");
+      torsoGrad.addColorStop(0.55, "#c61c1c");
+      torsoGrad.addColorStop(1, "#2b1620");
+      ctx.fillStyle = torsoGrad;
+      ctx.beginPath();
+      ctx.roundRect(-14, -62, 28, 32, 9);
+      ctx.fill();
+
+      ctx.strokeStyle = "#ffd54f";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(-12, -56);
+      ctx.lineTo(-4, -48);
+      ctx.moveTo(12, -56);
+      ctx.lineTo(4, -48);
+      ctx.moveTo(-10, -33);
+      ctx.lineTo(10, -33);
+      ctx.stroke();
+
+      ctx.save();
+      ctx.shadowColor = "#ffd54f";
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = "#fff59d";
+      ctx.beginPath();
+      ctx.arc(3, -46, 5.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      ctx.strokeStyle = "#e52d27";
+      ctx.lineWidth = 9;
+      ctx.beginPath();
+      ctx.moveTo(4, -34);
+      ctx.lineTo(4 + swing, -4);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#d32f2f";
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(2, -56);
+      ctx.lineTo(2 - swing * 0.85, -35);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#ffd54f";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(1 - swing * 0.72, -40);
+      ctx.lineTo(3 - swing * 0.72, -39);
+      ctx.stroke();
+
+      ctx.fillStyle = "#d32f2f";
+      ctx.beginPath();
+      ctx.arc(0, -73, 11.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ffd54f";
+      ctx.beginPath();
+      ctx.moveTo(-5, -82);
+      ctx.lineTo(-10, -93);
+      ctx.lineTo(0, -83);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(3, -82);
+      ctx.lineTo(7, -92);
+      ctx.lineTo(7, -81);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.save();
+      ctx.shadowColor = "#ffe082";
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = "#fff9c4";
+      ctx.beginPath();
+      ctx.moveTo(1, -75);
+      ctx.lineTo(10, -77);
+      ctx.lineTo(7, -71);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      ctx.restore();
+    }
+
+    function update() {
+      const groundY = getGroundY();
+
+      if (energy < 100 && Math.random() < 0.04) {
+        energy++;
+        energyEl.textContent = energy + "%";
+      }
+
+      let speed = 5.4;
+      if (dashTimer > 0) {
+        speed = 12.8;
+        dashTimer--;
+      }
+
+      if (Math.abs(moveInputX) > 0.08) {
+        hero.vx = moveInputX * speed;
+        hero.facing = moveInputX > 0 ? 1 : -1;
+        hero.walkCycle += 0.28;
+      } else {
+        hero.vx *= 0.78;
+      }
+
+      hero.x += hero.vx;
+
+      hero.vy += 0.8;
+      hero.y += hero.vy;
+
+      if (hero.y >= groundY) {
+        hero.y = groundY;
+        hero.vy = 0;
+        hero.onGround = true;
+      }
+
+      if (Math.abs(hero.vx) > 2.2 || dashTimer > 0) {
+        hero.trail.push({ x: hero.x, y: hero.y });
+        if (hero.trail.length > 7) hero.trail.shift();
+      } else if (hero.trail.length > 0) {
+        hero.trail.shift();
+      }
+
+      const targetCam = hero.x - canvas.width * 0.35;
+      cameraX += (targetCam - cameraX) * 0.12;
+
+      coins.forEach((c) => {
+        if (c.collected) return;
+        const dx = hero.x - c.x;
+        const dy = (hero.y - 45) - c.y;
+        if (Math.hypot(dx, dy) < 44) {
+          c.collected = true;
+          coinsCount += 10;
+          coinsEl.textContent = coinsCount;
+        }
+      });
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      update();
+      drawCity();
+      drawCoins();
+      drawHero();
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>
